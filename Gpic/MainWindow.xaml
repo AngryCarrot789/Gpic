@@ -12,65 +12,93 @@
         Title="General Purpose Image Composer" Height="576" Width="1024"
         Style="{StaticResource CustomWindowStyleEx}"
         d:DataContext="{d:DesignInstance vm:EditorViewModel}"
+        BorderBrush="{Binding ToolPalette.ActiveColour.Colour, Converter={StaticResource SkiaColourToBrushConverter}}"
         ss:UIFocusGroup.IsShortcutInputSource="True"
         ss:UIFocusGroup.FocusGroupPath="Application/Editor">
     <b:ShortcutCommandCollection.Collection>
         <b:ShortcutCommandCollection>
             <b:ShortcutCommandBinding ShortcutPath="Application/Editor/IncreaseBrushSize" Command="{Binding ToolPalette.IncreaseBrushSize, Mode=OneTime}"/>
             <b:ShortcutCommandBinding ShortcutPath="Application/Editor/DecreaseBrushSize" Command="{Binding ToolPalette.DecreaseBrushSize, Mode=OneTime}"/>
-            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/EditPrimaryColour" Command="{Binding ToolPalette.EditPrimaryColourCommand, Mode=OneTime}"/>
-            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/EditSecondaryColour" Command="{Binding ToolPalette.EditSecondaryColourCommand, Mode=OneTime}"/>
+            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/ActivateColour1" Command="{Binding ToolPalette.ActivateColourCommand, Mode=OneTime}" CommandParameter="1"/>
+            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/ActivateColour2" Command="{Binding ToolPalette.ActivateColourCommand, Mode=OneTime}" CommandParameter="2"/>
+            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/ActivateColour3" Command="{Binding ToolPalette.ActivateColourCommand, Mode=OneTime}" CommandParameter="3"/>
+            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/ActivateColour4" Command="{Binding ToolPalette.ActivateColourCommand, Mode=OneTime}" CommandParameter="4"/>
+            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/ActivateColour5" Command="{Binding ToolPalette.ActivateColourCommand, Mode=OneTime}" CommandParameter="5"/>
+            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/ActivateColour6" Command="{Binding ToolPalette.ActivateColourCommand, Mode=OneTime}" CommandParameter="6"/>
+            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/ActivateColour7" Command="{Binding ToolPalette.ActivateColourCommand, Mode=OneTime}" CommandParameter="7"/>
+            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/ActivateColour8" Command="{Binding ToolPalette.ActivateColourCommand, Mode=OneTime}" CommandParameter="8"/>
+            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/ActivateColour9" Command="{Binding ToolPalette.ActivateColourCommand, Mode=OneTime}" CommandParameter="9"/>
         </b:ShortcutCommandCollection>
     </b:ShortcutCommandCollection.Collection>
+    <!--
     <b:InputStateCollection.Collection>
         <b:InputStateCollection>
             <b:InputStateBinding InputStatePath="Application/Editor/UseSecondaryColourState" IsActive="{Binding ToolPalette.IsToolUsingSecondaryColour, Mode=OneWayToSource}"/>
         </b:InputStateCollection>
     </b:InputStateCollection.Collection>
+    -->
     <Grid>
         <DockPanel>
+            <DockPanel.Resources>
+                <Style x:Key="ColourButton" TargetType="{x:Type Button}">
+                    <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                    <Setter Property="BorderThickness" Value="1"/>
+                    <Setter Property="BorderBrush" Value="WhiteSmoke"/>
+                    <Setter Property="Template">
+                        <Setter.Value>
+                            <ControlTemplate TargetType="{x:Type Button}">
+                                <Border Opacity="1" x:Name="bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true"/>
+                                <ControlTemplate.Triggers>
+                                    <Trigger Property="IsMouseOver" Value="true">
+                                        <Setter Property="Opacity" TargetName="bd" Value="0.5"/>
+                                    </Trigger>
+                                    <Trigger Property="IsPressed" Value="true">
+                                        <Setter Property="Opacity" TargetName="bd" Value="0.75"/>
+                                    </Trigger>
+                                </ControlTemplate.Triggers>
+                            </ControlTemplate>
+                        </Setter.Value>
+                    </Setter>
+                </Style>
+                <converters:BoolToBrushConverter x:Key="ActiveColourConverter" TrueValue="OrangeRed" FalseValue="WhiteSmoke"/>
+            </DockPanel.Resources>
             <Grid DockPanel.Dock="Left" Width="40" x:Name="ToolBarPanel" DataContext="{Binding ToolPalette}">
                 <ToggleButton DataContext="{Binding PencilBrush}" IsChecked="{Binding IsActive}" Content="P" VerticalAlignment="Top" Height="40" Background="Transparent" BorderThickness="0" ToolTip="Pencil Tool"/>
                 <Grid VerticalAlignment="Bottom" Height="40">
-                    <Grid.Resources>
-                        <converters:SKColorToBrushConverter x:Key="SkiaColourToBrushConverter"/>
-                        <Style x:Key="ColourButton" TargetType="{x:Type Button}">
-                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
-                            <Setter Property="BorderThickness" Value="1"/>
-                            <Setter Property="BorderBrush" Value="WhiteSmoke"/>
-                            <Setter Property="Template">
-                                <Setter.Value>
-                                    <ControlTemplate TargetType="{x:Type Button}">
-                                        <Border Opacity="1" x:Name="bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true"/>
-                                        <ControlTemplate.Triggers>
-                                            <Trigger Property="IsMouseOver" Value="true">
-                                                <Setter Property="Opacity" TargetName="bd" Value="0.5"/>
-                                            </Trigger>
-                                            <Trigger Property="IsPressed" Value="true">
-                                                <Setter Property="Opacity" TargetName="bd" Value="0.75"/>
-                                            </Trigger>
-                                        </ControlTemplate.Triggers>
-                                    </ControlTemplate>
-                                </Setter.Value>
-                            </Setter>
-                        </Style>
-                        <converters:BoolToBrushConverter x:Key="PrimaryBorderConverter" TrueValue="WhiteSmoke" FalseValue="OrangeRed"/>
-                        <converters:BoolToBrushConverter x:Key="SecondaryBorderConverter" TrueValue="OrangeRed" FalseValue="WhiteSmoke"/>
-                    </Grid.Resources>
 
-                    <Button Style="{StaticResource ColourButton}" Command="{Binding EditSecondaryColourCommand, Mode=OneTime}" Margin="0,0,5,5"
-                            Background="{Binding SecondaryColour, Converter={StaticResource SkiaColourToBrushConverter}, FallbackValue=Black}"
-                            BorderBrush="{Binding IsToolUsingSecondaryColour, Converter={StaticResource SecondaryBorderConverter}}"
-                            Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="The secondary colour. Hold Q to use this colour for drawing" BorderThickness="2"/>
+                    <Button Style="{StaticResource ColourButton}" Margin="0,0,5,5"
+                            DataContext="{Binding Colours[1]}" Command="{Binding EditColourCommand, Mode=OneTime}"
+                            Background="{Binding Colour, Converter={StaticResource SkiaColourToBrushConverter}, FallbackValue=Black}"
+                            BorderBrush="{Binding IsActive, Converter={StaticResource ActiveColourConverter}}"
+                            Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Bottom"
+                            ToolTip="The secondary colour" BorderThickness="2"/>
 
-                    <Button Style="{StaticResource ColourButton}" Command="{Binding EditPrimaryColourCommand, Mode=OneTime}" Margin="5,5,0,0"
-                            Background="{Binding PrimaryColour, Converter={StaticResource SkiaColourToBrushConverter}, FallbackValue=White}"
-                            BorderBrush="{Binding IsToolUsingSecondaryColour, Converter={StaticResource PrimaryBorderConverter}}"
-                            Width="20" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTip="The primary colour. Release Q to use this colour for drawing" BorderThickness="2"/>
+                    <Button Style="{StaticResource ColourButton}" Margin="5,5,0,0"
+                            DataContext="{Binding Colours[0]}" Command="{Binding EditColourCommand, Mode=OneTime}"
+                            Background="{Binding Colour, Converter={StaticResource SkiaColourToBrushConverter}, FallbackValue=White}"
+                            BorderBrush="{Binding IsActive, Converter={StaticResource ActiveColourConverter}}"
+                            Width="20" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top"
+                            ToolTip="The primary colour" BorderThickness="2"/>
                 </Grid>
             </Grid>
             <Grid DockPanel.Dock="Bottom" Height="40">
-                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding ToolPalette.PencilBrush.Width, StringFormat={}Pencil Size: {0}}" Padding="5,0"/>
+                <Grid.Resources>
+                    <Storyboard x:Key="BrushAnimation">
+                        <ColorAnimation Storyboard.TargetProperty="(Border.Background).(SolidColorBrush.Color)" Duration="0:0:1"/>
+                    </Storyboard>
+                </Grid.Resources>
+                <Border>
+                    <StackPanel Orientation="Horizontal">
+                        <Button Style="{StaticResource ColourButton}" Margin="5,0,0,0" VerticalAlignment="Center" Width="24" Height="24" HorizontalAlignment="Left" DataContext="{Binding ToolPalette.Colours[2]}" Command="{Binding EditColourCommand, Mode=OneTime}" Background="{Binding Colour, Converter={StaticResource SkiaColourToBrushConverter}, FallbackValue=White}" BorderBrush="{Binding IsActive, Converter={StaticResource ActiveColourConverter}}" ToolTip="The 3rd colour" BorderThickness="2"/>
+                        <Button Style="{StaticResource ColourButton}" Margin="5,0,0,0" VerticalAlignment="Center" Width="24" Height="24" HorizontalAlignment="Left" DataContext="{Binding ToolPalette.Colours[3]}" Command="{Binding EditColourCommand, Mode=OneTime}" Background="{Binding Colour, Converter={StaticResource SkiaColourToBrushConverter}, FallbackValue=White}" BorderBrush="{Binding IsActive, Converter={StaticResource ActiveColourConverter}}" ToolTip="The 4th colour" BorderThickness="2"/>
+                        <Button Style="{StaticResource ColourButton}" Margin="5,0,0,0" VerticalAlignment="Center" Width="24" Height="24" HorizontalAlignment="Left" DataContext="{Binding ToolPalette.Colours[4]}" Command="{Binding EditColourCommand, Mode=OneTime}" Background="{Binding Colour, Converter={StaticResource SkiaColourToBrushConverter}, FallbackValue=White}" BorderBrush="{Binding IsActive, Converter={StaticResource ActiveColourConverter}}" ToolTip="The 5th colour" BorderThickness="2"/>
+                        <Button Style="{StaticResource ColourButton}" Margin="5,0,0,0" VerticalAlignment="Center" Width="24" Height="24" HorizontalAlignment="Left" DataContext="{Binding ToolPalette.Colours[5]}" Command="{Binding EditColourCommand, Mode=OneTime}" Background="{Binding Colour, Converter={StaticResource SkiaColourToBrushConverter}, FallbackValue=White}" BorderBrush="{Binding IsActive, Converter={StaticResource ActiveColourConverter}}" ToolTip="The 6th colour" BorderThickness="2"/>
+                        <Button Style="{StaticResource ColourButton}" Margin="5,0,0,0" VerticalAlignment="Center" Width="24" Height="24" HorizontalAlignment="Left" DataContext="{Binding ToolPalette.Colours[6]}" Command="{Binding EditColourCommand, Mode=OneTime}" Background="{Binding Colour, Converter={StaticResource SkiaColourToBrushConverter}, FallbackValue=White}" BorderBrush="{Binding IsActive, Converter={StaticResource ActiveColourConverter}}" ToolTip="The 7th colour" BorderThickness="2"/>
+                        <Button Style="{StaticResource ColourButton}" Margin="5,0,0,0" VerticalAlignment="Center" Width="24" Height="24" HorizontalAlignment="Left" DataContext="{Binding ToolPalette.Colours[7]}" Command="{Binding EditColourCommand, Mode=OneTime}" Background="{Binding Colour, Converter={StaticResource SkiaColourToBrushConverter}, FallbackValue=White}" BorderBrush="{Binding IsActive, Converter={StaticResource ActiveColourConverter}}" ToolTip="The 8th colour" BorderThickness="2"/>
+                        <Button Style="{StaticResource ColourButton}" Margin="5,0,0,0" VerticalAlignment="Center" Width="24" Height="24" HorizontalAlignment="Left" DataContext="{Binding ToolPalette.Colours[8]}" Command="{Binding EditColourCommand, Mode=OneTime}" Background="{Binding Colour, Converter={StaticResource SkiaColourToBrushConverter}, FallbackValue=White}" BorderBrush="{Binding IsActive, Converter={StaticResource ActiveColourConverter}}" ToolTip="The 9th colour" BorderThickness="2"/>
+                    </StackPanel>
+                </Border>
+                <TextBlock HorizontalAlignment="Right" VerticalAlignment="Center" Text="{Binding ToolPalette.PencilBrush.Width, StringFormat={}Pencil Size: {0}}" Padding="5,0"/>
             </Grid>
             <Grid>
                 <TabControl ItemsSource="{Binding Canvasses, Mode=OneTime}"

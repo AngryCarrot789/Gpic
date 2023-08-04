@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Gpic"
              xmlns:editor="clr-namespace:Gpic.Editor"
-             xmlns:controls="clr-namespace:Gpic.Controls"
+             xmlns:controls="clr-namespace:Gpic.Controls" xmlns:converters="clr-namespace:Gpic.Converters"
              Startup="Application_Startup">
     <Application.Resources>
         <ResourceDictionary>
@@ -20,7 +20,7 @@
                 <ResourceDictionary Source="PropertyEditing/PropertyEditorStyles.xaml"/>
                 <ResourceDictionary Source="Notifications/NotificationStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
-
+            <converters:SKColorToBrushConverter x:Key="SkiaColourToBrushConverter"/>
             <Style TargetType="{x:Type editor:CanvasControl}">
                 <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
                 <Setter Property="VerticalContentAlignment" Value="Stretch"/>

@@ -4,16 +4,21 @@ using SkiaSharp;
 namespace Gpic.Core.Editor.Tools {
     public class ToolPalette {
         /// <summary>
+        /// The 9 selectable colours
+        /// </summary>
+        public readonly SKColor[] Colours;
+
+        /// <summary>
         /// The primary colour
         /// </summary>
-        public SKColor PrimaryColour;
+        public SKColor PrimaryColour => this.Colours[0];
 
         /// <summary>
         /// An optional secondary colour
         /// </summary>
-        public SKColor SecondaryColour;
+        public SKColor SecondaryColour => this.Colours[1];
 
-        public bool IsToolUsingSecondaryColour;
+        public int ActiveColourIndex;
 
         public PencilBrush PencilBrush;
         public BrushTool ActiveBrush;
@@ -21,14 +26,16 @@ namespace Gpic.Core.Editor.Tools {
         /// <summary>
         /// Gets the primary or secondary based on <see cref="IsToolUsingSecondaryColour"/>
         /// </summary>
-        public SKColor ActiveToolColour => this.IsToolUsingSecondaryColour ? this.SecondaryColour : this.PrimaryColour;
+        public SKColor ActiveToolColour => this.Colours[this.ActiveColourIndex];
 
         public ToolPalette() {
             this.PencilBrush = new PencilBrush();
             this.ActiveBrush = this.PencilBrush;
-
-            this.PrimaryColour = SKColors.Aqua;
-            this.SecondaryColour = SKColors.DarkCyan;
+            this.Colours = new SKColor[9] {
+                SKColors.Aqua, SKColors.DarkCyan, SKColors.Red,
+                SKColors.Green, SKColors.Blue, SKColors.Orange,
+                SKColors.Purple, SKColors.WhiteSmoke, SKColors.Black
+            };
         }
     }
 }

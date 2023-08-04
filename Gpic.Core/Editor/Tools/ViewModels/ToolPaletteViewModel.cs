@@ -1,4 +1,5 @@
 using System;
+using System.Collections.ObjectModel;
 using Gpic.Core.Editor.Tools.Brushes.ViewModels;
 using Gpic.Core.Services;
 using SkiaSharp;
@@ -7,25 +8,30 @@ namespace Gpic.Core.Editor.Tools.ViewModels {
     public class ToolPaletteViewModel : BaseViewModel {
         public ToolPalette Model { get; }
 
-        public SKColor PrimaryColour {
-            get => this.Model.PrimaryColour;
-            set => this.RaisePropertyChanged(ref this.Model.PrimaryColour, value);
+        public ReadOnlyObservableCollection<SelectableColourViewModel> Colours { get; }
+
+        public SKColor PrimarySKColour => this.Model.PrimaryColour;
+        public SKColor SecondarySKColour => this.Model.SecondaryColour;
+
+        private SelectableColourViewModel activeColour;
+        public SelectableColourViewModel ActiveColour {
+            get => this.activeColour ?? this.Colours[0];
+            private set => this.RaisePropertyChanged(ref this.activeColour, value);
         }
 
-        public SKColor SecondaryColour {
-            get => this.Model.SecondaryColour;
-            set => this.RaisePropertyChanged(ref this.Model.SecondaryColour, value);
+        public int ActiveIndex {
+            get => this.Model.ActiveColourIndex;
+            set {
+                this.ActiveColour = this.Colours[value];
+                this.ActiveColour.IsActive = true;
+                this.RaisePropertyChanged(ref this.Model.ActiveColourIndex, value);
+            }
         }
 
         private PencilBrushViewModel pencilBrush;
         public PencilBrushViewModel PencilBrush {
             get => this.pencilBrush;
             set => this.RaisePropertyChanged(ref this.pencilBrush, value);
-        }
-
-        public bool IsToolUsingSecondaryColour {
-            get => this.Model.IsToolUsingSecondaryColour;
-            set => this.RaisePropertyChanged(ref this.Model.IsToolUsingSecondaryColour, value);
         }
 
         private BrushToolViewModel activeBrush;
@@ -50,28 +56,45 @@ namespace Gpic.Core.Editor.Tools.ViewModels {
         public RelayCommand IncreaseBrushSize { get; }
         public RelayCommand DecreaseBrushSize { get; }
 
-        public RelayCommand EditPrimaryColourCommand { get; }
-        public RelayCommand EditSecondaryColourCommand { get; }
+        public RelayCommand<string> ActivateColourCommand { get; }
+        public RelayCommand<string> EditColourCommand { get; }
 
         public ToolPaletteViewModel(ToolPalette model) {
             this.Model = model ?? throw new ArgumentNullException(nameof(model));
+            ObservableCollection<SelectableColourViewModel> colours = new ObservableCollection<SelectableColourViewModel>() {
+                new SelectableColourViewModel(model.Colours[0]), new SelectableColourViewModel(model.Colours[1]), new SelectableColourViewModel(model.Colours[2]),
+                new SelectableColourViewModel(model.Colours[3]), new SelectableColourViewModel(model.Colours[4]), new SelectableColourViewModel(model.Colours[5]),
+                new SelectableColourViewModel(model.Colours[6]), new SelectableColourViewModel(model.Colours[7]), new SelectableColourViewModel(model.Colours[8])
+            };
+
+            this.Colours = new ReadOnlyObservableCollection<SelectableColourViewModel>(colours);
+
             this.IncreaseBrushSize = new RelayCommand(() => ((IBrushSize) this.ActiveBrush).Increse(), () => this.ActiveBrush is IBrushSize);
             this.DecreaseBrushSize = new RelayCommand(() => ((IBrushSize) this.ActiveBrush).Decrease(), () => this.ActiveBrush is IBrushSize);
-
-            this.EditPrimaryColourCommand = new RelayCommand(() => {
-                if (PickColour(this.PrimaryColour, out SKColor primary))
-                    this.PrimaryColour = primary;
-            });
-
-            this.EditSecondaryColourCommand = new RelayCommand(() => {
-                if (PickColour(this.SecondaryColour, out SKColor primary))
-                    this.SecondaryColour = primary;
-            });
-
             this.ActiveBrush = this.pencilBrush = new PencilBrushViewModel(model.PencilBrush);
+
+            this.EditColourCommand = new RelayCommand<string>(x => {
+                this.Colours[int.Parse(x) - 1].PickColour();
+            });
+
+            this.ActivateColourCommand = new RelayCommand<string>(x => {
+                this.SetActiveColour(int.Parse(x) - 1);
+            });
         }
 
-        private static bool PickColour(SKColor? input, out SKColor output) {
+        public void SetActiveColour(int index) {
+            if (index < 0 || index > 8) {
+                throw new IndexOutOfRangeException();
+            }
+
+            foreach (SelectableColourViewModel colour in this.Colours) {
+                colour.IsActive = false;
+            }
+
+            this.ActiveIndex = index;
+        }
+
+        public static bool PickColour(SKColor? input, out SKColor output) {
             IColourPicker picker = IoC.Provide<IColourPicker>();
             if (picker.PickARGB(input) is SKColor colour) {
                 output = colour;

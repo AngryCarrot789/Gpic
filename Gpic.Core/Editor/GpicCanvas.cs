@@ -28,7 +28,7 @@ namespace Gpic.Core.Editor {
 
         public void CreateBitmap() {
             this.Bitmap?.Dispose();
-            this.Bitmap = new SKBitmap(this.Width, this.Height, SKColorType.Rgba8888, SKAlphaType.Premul);
+            this.Bitmap = new SKBitmap(this.Width, this.Height, SKColorType.Bgra8888, SKAlphaType.Premul);
         }
     }
 }

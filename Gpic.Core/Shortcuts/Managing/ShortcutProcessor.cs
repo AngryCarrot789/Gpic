@@ -8,6 +8,7 @@ using Gpic.Core.Actions;
 using Gpic.Core.Actions.Contexts;
 using Gpic.Core.Shortcuts.Inputs;
 using Gpic.Core.Shortcuts.Usage;
+using Gpic.Core.Utils;
 using OpenTK.Graphics.OpenGL4;
 
 namespace Gpic.Core.Shortcuts.Managing {
@@ -306,10 +307,28 @@ namespace Gpic.Core.Shortcuts.Managing {
                         continue;
                     }
 
+                    state.LastActivationTime = Time.GetSystemMillis();
                     await this.OnInputStateTriggered(state, true);
                 }
                 else if (state.IsActive) {
+                    // long lastActivation = state.LastActivationTime;
+                    // if (lastActivation != -1) {
+                    //     state.LastActivationTime = -1;
+                    //     if (state.IsAutoLockThresholdEnabled) {
+                    //         long time = Time.GetSystemMillis();
+                    //         long duration = time - lastActivation;
+                    //         if (duration < state.ThresholdUntilDeactivateOnStroke) {
+                    //             state.IsCurrentlyLockedOpen = true;
+                    //             continue; // keep it locked open
+                    //         }
+                    //     }
+                    // }
+
+                    state.LastActivationTime = -1;
                     await this.OnInputStateTriggered(state, false);
+                }
+                else {
+                    state.LastActivationTime = -1;
                 }
             }
 
