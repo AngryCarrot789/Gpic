@@ -1,7 +1,8 @@
 using System;
 using System.Collections.ObjectModel;
-using Gpic.Core.Editor.Brushes;
-using Gpic.Core.Editor.Brushes.ViewModels;
+using Gpic.Core.Editor.Tools;
+using Gpic.Core.Editor.Tools.Brushes.ViewModels;
+using Gpic.Core.Editor.Tools.ViewModels;
 using Gpic.Core.Services;
 using SkiaSharp;
 
@@ -10,91 +11,58 @@ namespace Gpic.Core.Editor.ViewModels {
         private readonly ObservableCollection<CanvasViewModel> canvasses;
         public ReadOnlyObservableCollection<CanvasViewModel> Canvasses { get; }
 
-        private CanvasViewModel mainCanvas;
+        private CanvasViewModel activeCanvas;
 
         /// <summary>
         /// The currently active canvas
         /// </summary>
-        public CanvasViewModel MainCanvas {
-            get => this.mainCanvas;
+        public CanvasViewModel ActiveCanvas {
+            get => this.activeCanvas;
             set {
                 if (value != null && !this.canvasses.Contains(value))
-                    throw new InvalidOperationException("Value must be stored in the canvas list");
-                this.RaisePropertyChanged(ref this.mainCanvas, value);
+                    throw new InvalidOperationException("Value must be stored in the view model's canvas list");
+                if (value != null && !this.Model.Canvasses.Contains(value.Model))
+                    throw new InvalidOperationException("Value must be stored in the model's canvas list");
+                this.Model.ActiveCanvas = value?.Model;
+                this.RaisePropertyChanged(ref this.activeCanvas, value);
             }
         }
 
-        public SKColor PrimaryColour {
-            get => this.Model.PrimaryColour;
-            set => this.RaisePropertyChanged(ref this.Model.PrimaryColour, value);
-        }
-
-        public SKColor SecondaryColour {
-            get => this.Model.SecondaryColour;
-            set => this.RaisePropertyChanged(ref this.Model.SecondaryColour, value);
-        }
-
-        private PencilBrushViewModel pencilBrush;
-        public PencilBrushViewModel PencilBrush {
-            get => this.pencilBrush;
-            set => this.RaisePropertyChanged(ref this.pencilBrush, value);
-        }
-
-        public bool IsToolUsingSecondaryColour {
-            get => this.Model.IsToolUsingSecondaryColour;
-            set => this.RaisePropertyChanged(ref this.Model.IsToolUsingSecondaryColour, value);
-        }
-
-        private BrushToolViewModel activeBrush;
-        public BrushToolViewModel ActiveBrush {
-            get => this.activeBrush;
-            set {
-                this.RaisePropertyChanged(ref this.activeBrush, value);
-                this.IncreaseBrushSize.RaiseCanExecuteChanged();
-                this.DecreaseBrushSize.RaiseCanExecuteChanged();
-            }
-        }
-
-        public RelayCommand IncreaseBrushSize { get; }
-        public RelayCommand DecreaseBrushSize { get; }
-
-        public RelayCommand EditPrimaryColourCommand { get; }
-        public RelayCommand EditSecondaryColourCommand { get; }
+        public ToolPaletteViewModel ToolPalette { get; }
 
         public GpicEditor Model { get; }
 
         public EditorViewModel(GpicEditor model) {
             this.Model = model ?? throw new ArgumentNullException(nameof(model));
+            this.ToolPalette = new ToolPaletteViewModel(model.ToolPalette);
             this.canvasses = new ObservableCollection<CanvasViewModel>();
             this.Canvasses = new ReadOnlyObservableCollection<CanvasViewModel>(this.canvasses);
-            this.IncreaseBrushSize = new RelayCommand(() => ((IBrushSize) this.ActiveBrush).Increse(), () => this.ActiveBrush is IBrushSize);
-            this.DecreaseBrushSize = new RelayCommand(() => ((IBrushSize) this.ActiveBrush).Decrease(), () => this.ActiveBrush is IBrushSize);
-
-            this.EditPrimaryColourCommand = new RelayCommand(() => {
-                if (PickColour(this.PrimaryColour, out SKColor primary))
-                    this.PrimaryColour = primary;
-            });
-
-            this.EditSecondaryColourCommand = new RelayCommand(() => {
-                if (PickColour(this.SecondaryColour, out SKColor primary))
-                    this.SecondaryColour = primary;
-            });
-
-            this.activeBrush = this.pencilBrush = new PencilBrushViewModel(model.PencilBrush);
-            this.mainCanvas = new CanvasViewModel(model.MainCanvas);
-            this.mainCanvas.Model.SetSizeAndCreateBitmap(1280, 720);
-            this.canvasses.Add(this.mainCanvas);
         }
 
-        private static bool PickColour(SKColor? input, out SKColor output) {
-            IColourPicker picker = IoC.Provide<IColourPicker>();
-            if (picker.PickARGB(input) is SKColor colour) {
-                output = colour;
-                return true;
+        public void SetupInitial() {
+            GpicCanvas canvas = new GpicCanvas();
+            canvas.SetSizeAndCreateBitmap(1280, 720);
+            using (SKCanvas skc = new SKCanvas(canvas.Bitmap)) {
+                using (SKPaint p = new SKPaint() {Color = SKColors.Black}) {
+                    skc.DrawRect(new SKRect(0, 0, 1280, 720), p);
+                }
+
+                using (SKPaint paint = new SKPaint() {Color = SKColors.WhiteSmoke}) {
+                    using (SKTypeface face = SKTypeface.FromFamilyName("Consolas")) {
+                        using (SKFont font = new SKFont(face, 25f)) {
+                            skc.DrawText("Use CTRL + MouseWheel to zoom", 0, 20, font, paint);
+                            skc.DrawText("Use the left mouse to draw pixels", 0, 60, font, paint);
+                            skc.DrawText("(you won't be able to see the pixels until you zoom in enough)", 0, 100, font, paint);
+                        }
+                    }
+                }
             }
 
-            output = default;
-            return false;
+            this.Model.Canvasses.Add(canvas);
+            CanvasViewModel vm = new CanvasViewModel(canvas);
+            this.canvasses.Add(vm);
+            this.ActiveCanvas = vm;
+            vm.RaiseRenderInvalidated();
         }
     }
 }

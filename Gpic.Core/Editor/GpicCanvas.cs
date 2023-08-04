@@ -7,6 +7,7 @@ namespace Gpic.Core.Editor {
     public class GpicCanvas {
         public string FilePath;
         public int Width, Height;
+        public string DisplayName;
 
         /// <summary>
         /// The current skia bitmap used for storing the pixel data
@@ -20,6 +21,9 @@ namespace Gpic.Core.Editor {
             this.Width = width;
             this.Height = height;
             this.CreateBitmap();
+            if (string.IsNullOrEmpty(this.DisplayName)) {
+                this.DisplayName = $"Canvas ({width} x {height})";
+            }
         }
 
         public void CreateBitmap() {

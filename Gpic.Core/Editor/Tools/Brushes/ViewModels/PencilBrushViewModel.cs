@@ -1,6 +1,6 @@
 using System;
 
-namespace Gpic.Core.Editor.Brushes.ViewModels {
+namespace Gpic.Core.Editor.Tools.Brushes.ViewModels {
     public class PencilBrushViewModel : BrushToolViewModel, IBrushSize {
         public new PencilBrush Model => (PencilBrush) base.Model;
 

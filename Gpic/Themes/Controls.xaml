@@ -1245,7 +1245,7 @@
         </Setter>
     </Style>
 
-    <Style TargetType="{x:Type TextElement}" BasedOn="{StaticResource {x:Type TextElement}}">
+    <Style TargetType="{x:Type TextElement}">
         <Setter Property="Foreground" Value="{DynamicResource ABrush.Foreground.Static}"/>
         <Setter Property="RenderOptions.EdgeMode" Value="Unspecified"/>
         <Setter Property="TextOptions.TextRenderingMode" Value="ClearType"/>
@@ -4421,6 +4421,7 @@
             </Trigger>
         </ControlTemplate.Triggers>
     </ControlTemplate>
+    
     <Style x:Key="CustomWindowStyle" TargetType="{x:Type Window}">
         <Setter Property="Background" Value="{DynamicResource Window.Static.Background}"/>
         <Setter Property="BorderBrush" Value="{DynamicResource Window.Static.Border}"/>
@@ -4433,7 +4434,7 @@
                 <!-- because the glass frame causes this weird flickering white border when resizing :( -->
                 <!-- Seems like it's the best idea to just put Top to 1 and the rest on 0, because you'll probably notice it less -->
                 <WindowChrome CaptionHeight="26" ResizeBorderThickness="6" CornerRadius="0" GlassFrameThickness="1 0 0 0"
-                                  NonClientFrameEdges="None" UseAeroCaptionButtons="False"/>
+                              NonClientFrameEdges="None" UseAeroCaptionButtons="False"/>
             </Setter.Value>
         </Setter>
         <Setter Property="Template">

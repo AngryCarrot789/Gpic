@@ -2,7 +2,7 @@ using System;
 using System.Numerics;
 using SkiaSharp;
 
-namespace Gpic.Core.Editor.Brushes {
+namespace Gpic.Core.Editor.Tools.Brushes {
     public class PencilBrush : BrushTool {
         public int Width, Height;
 
@@ -22,7 +22,7 @@ namespace Gpic.Core.Editor.Brushes {
             endX = Math.Min(canvas.Width - 1, endX);
             endY = Math.Min(canvas.Height - 1, endY);
 
-            SKColor colour = editor.ActiveToolColour;
+            SKColor colour = editor.ToolPalette.ActiveToolColour;
 
             // Set pixels within the rectangle to red color
             for (int y = startY; y <= endY; y++) {

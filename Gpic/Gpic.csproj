@@ -136,6 +136,7 @@
     <Compile Include="AttachedProperties\ToggleButtonHelper.cs" />
     <Compile Include="AttachedProperties\TopmostFocus.cs" />
     <Compile Include="BindingErrorListener.cs" />
+    <Compile Include="Editor\CanvasControl.cs" />
     <Compile Include="PropertyEditing\PropertyEditor.cs" />
     <Compile Include="PropertyEditing\PropertyEditorItemContainer.cs" />
     <Compile Include="PropertyEditing\PropertyEditorItemsControl.cs" />

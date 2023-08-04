@@ -3,34 +3,34 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:Gpic"
         xmlns:views="clr-namespace:Gpic.Views"
-        xmlns:c="clr-namespace:Gpic.Controls"
-        xmlns:e="clr-namespace:Gpic.Core.Editor;assembly=Gpic.Core"
         xmlns:vm="clr-namespace:Gpic.Core.Editor.ViewModels;assembly=Gpic.Core"
         xmlns:b="clr-namespace:Gpic.Shortcuts.Bindings"
         xmlns:ss="clr-namespace:Gpic.Shortcuts" xmlns:converters="clr-namespace:Gpic.Converters"
-        xmlns:attached="clr-namespace:Gpic.Themes.Attached"
+        xmlns:editor="clr-namespace:Gpic.Editor"
         mc:Ignorable="d"
-        Title="General Purpose Image Composer" Height="450" Width="800"
+        Title="General Purpose Image Composer" Height="576" Width="1024"
         Style="{StaticResource CustomWindowStyleEx}"
         d:DataContext="{d:DesignInstance vm:EditorViewModel}"
         ss:UIFocusGroup.IsShortcutInputSource="True"
         ss:UIFocusGroup.FocusGroupPath="Application/Editor">
     <b:ShortcutCommandCollection.Collection>
         <b:ShortcutCommandCollection>
-            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/IncreaseBrushSize" Command="{Binding IncreaseBrushSize, Mode=OneTime}"/>
-            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/DecreaseBrushSize" Command="{Binding DecreaseBrushSize, Mode=OneTime}"/>
+            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/IncreaseBrushSize" Command="{Binding ToolPalette.IncreaseBrushSize, Mode=OneTime}"/>
+            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/DecreaseBrushSize" Command="{Binding ToolPalette.DecreaseBrushSize, Mode=OneTime}"/>
+            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/EditPrimaryColour" Command="{Binding ToolPalette.EditPrimaryColourCommand, Mode=OneTime}"/>
+            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/EditSecondaryColour" Command="{Binding ToolPalette.EditSecondaryColourCommand, Mode=OneTime}"/>
         </b:ShortcutCommandCollection>
     </b:ShortcutCommandCollection.Collection>
     <b:InputStateCollection.Collection>
         <b:InputStateCollection>
-            <b:InputStateBinding InputStatePath="Application/Editor/UseSecondaryColourState" IsActive="{Binding IsToolUsingSecondaryColour, Mode=OneWayToSource}"/>
+            <b:InputStateBinding InputStatePath="Application/Editor/UseSecondaryColourState" IsActive="{Binding ToolPalette.IsToolUsingSecondaryColour, Mode=OneWayToSource}"/>
         </b:InputStateCollection>
     </b:InputStateCollection.Collection>
     <Grid>
         <DockPanel>
-            <Grid DockPanel.Dock="Left" Width="40" x:Name="ToolBarPanel">
+            <Grid DockPanel.Dock="Left" Width="40" x:Name="ToolBarPanel" DataContext="{Binding ToolPalette}">
+                <ToggleButton DataContext="{Binding PencilBrush}" IsChecked="{Binding IsActive}" Content="P" VerticalAlignment="Top" Height="40" Background="Transparent" BorderThickness="0" ToolTip="Pencil Tool"/>
                 <Grid VerticalAlignment="Bottom" Height="40">
                     <Grid.Resources>
                         <converters:SKColorToBrushConverter x:Key="SkiaColourToBrushConverter"/>
@@ -61,20 +61,103 @@
                     <Button Style="{StaticResource ColourButton}" Command="{Binding EditSecondaryColourCommand, Mode=OneTime}" Margin="0,0,5,5"
                             Background="{Binding SecondaryColour, Converter={StaticResource SkiaColourToBrushConverter}, FallbackValue=Black}"
                             BorderBrush="{Binding IsToolUsingSecondaryColour, Converter={StaticResource SecondaryBorderConverter}}"
-                            Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="The secondary colour" BorderThickness="2"/>
+                            Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="The secondary colour. Hold Q to use this colour for drawing" BorderThickness="2"/>
 
                     <Button Style="{StaticResource ColourButton}" Command="{Binding EditPrimaryColourCommand, Mode=OneTime}" Margin="5,5,0,0"
                             Background="{Binding PrimaryColour, Converter={StaticResource SkiaColourToBrushConverter}, FallbackValue=White}"
                             BorderBrush="{Binding IsToolUsingSecondaryColour, Converter={StaticResource PrimaryBorderConverter}}"
-                            Width="20" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTip="The primary colour" BorderThickness="2"/>
+                            Width="20" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTip="The primary colour. Release Q to use this colour for drawing" BorderThickness="2"/>
                 </Grid>
             </Grid>
             <Grid DockPanel.Dock="Bottom" Height="40">
-                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding PencilBrush.Width, StringFormat={}Pencil Size: {0}}" Padding="5,0"/>
+                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding ToolPalette.PencilBrush.Width, StringFormat={}Pencil Size: {0}}" Padding="5,0"/>
             </Grid>
-            <c:FreeMoveViewPortV2 DataContext="{Binding MainCanvas}" x:Name="VPViewBox" ClipToBounds="True" Background="{DynamicResource PanelBackground1}" PanToCursorOnUserZoom="True">
-                <local:SKAsyncViewPort Width="{Binding Width, FallbackValue=0}" Height="{Binding Height, FallbackValue=0}" x:Name="MainCanvas"/>
-            </c:FreeMoveViewPortV2>
+            <Grid>
+                <TabControl ItemsSource="{Binding Canvasses, Mode=OneTime}"
+                            SelectedItem="{Binding ActiveCanvas, UpdateSourceTrigger=PropertyChanged}"
+                            Background="{DynamicResource ABrush.Tone1.Background.Static}"
+                            BorderBrush="{DynamicResource PanelBorderBrush}" BorderThickness="1,1,0,1"
+                            ItemContainerStyle="{StaticResource NoOffsetTabItem}">
+                    <TabControl.Style>
+                        <Style TargetType="{x:Type TabControl}">
+                            <Setter Property="Padding" Value="0" />
+                            <Setter Property="HorizontalContentAlignment" Value="Center" />
+                            <Setter Property="VerticalContentAlignment" Value="Center" />
+                            <Setter Property="Background" Value="{DynamicResource TabItem.Selected.Background}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource TabItem.Selected.Border}" />
+                            <Setter Property="BorderThickness" Value="1" />
+                            <Setter Property="Foreground" Value="{DynamicResource ABrush.Foreground.Static}" />
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type TabControl}">
+                                        <Grid x:Name="templateRoot" ClipToBounds="true" SnapsToDevicePixels="true" KeyboardNavigation.TabNavigation="Local">
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition x:Name="ColumnDefinition0" />
+                                                <ColumnDefinition x:Name="ColumnDefinition1" Width="0" />
+                                            </Grid.ColumnDefinitions>
+                                            <Grid.RowDefinitions>
+                                                <RowDefinition x:Name="RowDefinition0" Height="Auto" />
+                                                <RowDefinition x:Name="RowDefinition1" Height="*" />
+                                            </Grid.RowDefinitions>
+                                            <TabPanel x:Name="headerPanel" Background="Transparent" Grid.Column="0" IsItemsHost="true" Margin="0" Grid.Row="0" KeyboardNavigation.TabIndex="1" Panel.ZIndex="1" />
+                                            <Border x:Name="contentPanel" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Grid.Column="0" KeyboardNavigation.DirectionalNavigation="Contained" Grid.Row="1" KeyboardNavigation.TabIndex="2" KeyboardNavigation.TabNavigation="Local">
+                                                <ContentPresenter x:Name="PART_SelectedContentHost" ContentSource="SelectedContent" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" />
+                                            </Border>
+                                        </Grid>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="TabStripPlacement" Value="Bottom">
+                                                <Setter Property="Grid.Row" TargetName="headerPanel" Value="1" />
+                                                <Setter Property="Grid.Row" TargetName="contentPanel" Value="0" />
+                                                <Setter Property="Height" TargetName="RowDefinition0" Value="*" />
+                                                <Setter Property="Height" TargetName="RowDefinition1" Value="Auto" />
+                                                <Setter Property="Margin" TargetName="headerPanel" Value="2,0,2,2" />
+                                            </Trigger>
+                                            <Trigger Property="TabStripPlacement" Value="Left">
+                                                <Setter Property="Grid.Row" TargetName="headerPanel" Value="0" />
+                                                <Setter Property="Grid.Row" TargetName="contentPanel" Value="0" />
+                                                <Setter Property="Grid.Column" TargetName="headerPanel" Value="0" />
+                                                <Setter Property="Grid.Column" TargetName="contentPanel" Value="1" />
+                                                <Setter Property="Width" TargetName="ColumnDefinition0" Value="Auto" />
+                                                <Setter Property="Width" TargetName="ColumnDefinition1" Value="*" />
+                                                <Setter Property="Height" TargetName="RowDefinition0" Value="*" />
+                                                <Setter Property="Height" TargetName="RowDefinition1" Value="0" />
+                                                <Setter Property="Margin" TargetName="headerPanel" Value="2,2,0,2" />
+                                            </Trigger>
+                                            <Trigger Property="TabStripPlacement" Value="Right">
+                                                <Setter Property="Grid.Row" TargetName="headerPanel" Value="0" />
+                                                <Setter Property="Grid.Row" TargetName="contentPanel" Value="0" />
+                                                <Setter Property="Grid.Column" TargetName="headerPanel" Value="1" />
+                                                <Setter Property="Grid.Column" TargetName="contentPanel" Value="0" />
+                                                <Setter Property="Width" TargetName="ColumnDefinition0" Value="*" />
+                                                <Setter Property="Width" TargetName="ColumnDefinition1" Value="Auto" />
+                                                <Setter Property="Height" TargetName="RowDefinition0" Value="*" />
+                                                <Setter Property="Height" TargetName="RowDefinition1" Value="0" />
+                                                <Setter Property="Margin" TargetName="headerPanel" Value="0,2,2,2" />
+                                            </Trigger>
+                                            <Trigger Property="IsEnabled" Value="false">
+                                                <Setter Property="TextElement.Foreground" TargetName="templateRoot" Value="{DynamicResource ABrush.Foreground.Disabled}" />
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                    </TabControl.Style>
+                    <TabControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding DisplayName}"/>
+                        </DataTemplate>
+                    </TabControl.ItemTemplate>
+                    <TabControl.ContentTemplate>
+                        <DataTemplate DataType="{x:Type vm:CanvasViewModel}">
+                            <editor:CanvasControl Background="{DynamicResource PanelBackground1}"
+                                                  Editor="{Binding DataContext, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type TabControl}}}"
+                                                  Canvas="{Binding .}"
+                                                  HorizontalAlignment="Stretch" VerticalAlignment="Stretch"/>
+                        </DataTemplate>
+                    </TabControl.ContentTemplate>
+                </TabControl>
+            </Grid>
         </DockPanel>
     </Grid>
 </views:WindowEx>

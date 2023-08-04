@@ -154,12 +154,8 @@ namespace Gpic {
             }
 
             await this.SetActivity("Loading Gpic main window...");
-            GpicEditor editor = new GpicEditor();
-            editor.MainCanvas = new GpicCanvas();
-            editor.MainCanvas.SetSizeAndCreateBitmap(1280, 720);
-
             MainWindow window = new MainWindow();
-            window.Editor = new EditorViewModel(editor);
+            window.Editor = new EditorViewModel(new GpicEditor());
             this.splash.Close();
             this.MainWindow = window;
             this.ShutdownMode = ShutdownMode.OnMainWindowClose;
@@ -171,7 +167,7 @@ namespace Gpic {
         }
 
         public async Task OnVideoEditorLoaded(MainWindow editor) {
-            editor.SetupInitial();
+            editor.Editor.SetupInitial();
         }
     }
 }

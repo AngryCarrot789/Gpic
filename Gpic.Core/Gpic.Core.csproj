@@ -14,8 +14,4 @@
     <PackageReference Include="System.Numerics.Vectors" Version="4.5.0" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Utils\Collections\" />
-  </ItemGroup>
-
 </Project>

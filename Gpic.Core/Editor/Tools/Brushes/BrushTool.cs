@@ -1,6 +1,6 @@
 using System.Numerics;
 
-namespace Gpic.Core.Editor.Brushes {
+namespace Gpic.Core.Editor.Tools.Brushes {
     /// <summary>
     /// Base class for a brush
     /// </summary>

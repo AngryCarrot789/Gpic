@@ -35,6 +35,14 @@
                 <KeyStroke Key="OemOpenBrackets"/>
             </Shortcut>
 
+            <Shortcut Name="EditPrimaryColour">
+                <KeyStroke Key="D1"/>
+            </Shortcut>
+
+            <Shortcut Name="EditSecondaryColour">
+                <KeyStroke Key="D2"/>
+            </Shortcut>
+
             <InputState Name="UseSecondaryColourState">
                 <!--
                 <InputState.ActivationMouseStroke Button="X1"/>

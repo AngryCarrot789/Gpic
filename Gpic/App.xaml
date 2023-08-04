@@ -2,6 +2,8 @@
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:local="clr-namespace:Gpic"
+             xmlns:editor="clr-namespace:Gpic.Editor"
+             xmlns:controls="clr-namespace:Gpic.Controls"
              Startup="Application_Startup">
     <Application.Resources>
         <ResourceDictionary>
@@ -18,6 +20,28 @@
                 <ResourceDictionary Source="PropertyEditing/PropertyEditorStyles.xaml"/>
                 <ResourceDictionary Source="Notifications/NotificationStyles.xaml"/>
             </ResourceDictionary.MergedDictionaries>
+
+            <Style TargetType="{x:Type editor:CanvasControl}">
+                <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+                <Setter Property="VerticalContentAlignment" Value="Stretch"/>
+                <Setter Property="Template">
+                    <Setter.Value>
+                        <ControlTemplate TargetType="{x:Type editor:CanvasControl}">
+                            <controls:FreeMoveViewPortV2 x:Name="PART_FreeMoveViewPort"
+                                                         ClipToBounds="True"
+                                                         Background="{DynamicResource PanelBackground1}"
+                                                         PanToCursorOnUserZoom="True"
+                                                         ZoomScale="{TemplateBinding ZoomScale}"
+                                                         HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                                         VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
+                                <local:SKAsyncViewPort x:Name="PART_SkiaViewPort"
+                                                       Width="{Binding Canvas.Width, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type editor:CanvasControl}}, FallbackValue=0}"
+                                                       Height="{Binding Canvas.Height, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type editor:CanvasControl}}, FallbackValue=0}"/>
+                            </controls:FreeMoveViewPortV2>
+                        </ControlTemplate>
+                    </Setter.Value>
+                </Setter>
+            </Style>
         </ResourceDictionary>
     </Application.Resources>
 </Application>
