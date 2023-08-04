@@ -4546,6 +4546,11 @@
     </Style>
 
     <Style x:Key="CustomWindowStyleEx" TargetType="{x:Type views:WindowEx}" BasedOn="{StaticResource CustomWindowStyle}">
+        <Setter Property="Background" Value="{DynamicResource Window.Static.Background}"/>
+        <Setter Property="BorderBrush" Value="{DynamicResource Window.Static.Border}"/>
+        <Setter Property="Foreground" Value="{DynamicResource Window.Static.Foreground}"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="WindowStyle" Value="SingleBorderWindow"/>
         <Setter Property="TitlebarBrush" Value="{DynamicResource Window.Static.Title.Background}" />
         <Setter Property="Template">
             <Setter.Value>

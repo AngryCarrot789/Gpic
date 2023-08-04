@@ -32,7 +32,7 @@ namespace Gpic.Controls {
                 typeof(double),
                 typeof(FreeMoveViewPortV2),
                 new FrameworkPropertyMetadata(
-                    double.PositiveInfinity,
+                    200d,
                     FrameworkPropertyMetadataOptions.AffectsMeasure,
                     (d, e) => OnMaximumZoomChanged((FreeMoveViewPortV2) d, (double) e.OldValue, (double) e.NewValue),
                     CoerceMaximumZoom));

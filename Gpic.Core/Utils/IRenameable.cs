@@ -1,6 +1,6 @@
 using System.Threading.Tasks;
 
-namespace Gpic.Core.Editor {
+namespace Gpic.Core.Utils {
     public interface IRenameable {
         Task<bool> RenameAsync();
     }

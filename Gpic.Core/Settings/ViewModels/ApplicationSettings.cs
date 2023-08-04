@@ -4,16 +4,6 @@ namespace Gpic.Core.Settings.ViewModels {
     public class ApplicationSettings : BaseViewModel {
         public AppSettings Settings { get; private set; }
 
-        public bool UseVerticalTrackNumberDraggerBehaviour {
-            get => this.Settings.UseVerticalTrackNumberDraggerBehaviour;
-            set => this.RaisePropertyChanged(ref this.Settings.UseVerticalTrackNumberDraggerBehaviour, value);
-        }
-
-        public bool StopOnTogglePlay {
-            get => this.Settings.StopOnTogglePlay;
-            set => this.RaisePropertyChanged(ref this.Settings.StopOnTogglePlay, value);
-        }
-
         public ApplicationSettings() {
             this.Settings = AppSettings.Defaults();
         }

@@ -92,6 +92,7 @@
     <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
+    <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -135,8 +136,6 @@
     <Compile Include="AttachedProperties\ToggleButtonHelper.cs" />
     <Compile Include="AttachedProperties\TopmostFocus.cs" />
     <Compile Include="BindingErrorListener.cs" />
-    <Compile Include="Editor\Canvases\CanvasViewModel.cs" />
-    <Compile Include="Editor\EditorViewModel.cs" />
     <Compile Include="PropertyEditing\PropertyEditor.cs" />
     <Compile Include="PropertyEditing\PropertyEditorItemContainer.cs" />
     <Compile Include="PropertyEditing\PropertyEditorItemsControl.cs" />
@@ -145,6 +144,7 @@
     <Compile Include="Resources\I18N\WPFDictionaryTranslator.cs" />
     <Compile Include="Resources\IconTypeToImageSourceConverter.cs" />
     <Compile Include="Services\ClipboardService.cs" />
+    <Compile Include="Services\ColourPickerService.cs" />
     <Compile Include="Services\WinExplorerService.cs" />
     <Compile Include="Shortcuts\ActivationHandlerReference.cs" />
     <Compile Include="Shortcuts\Bindings\ShortcutBindingCollection.cs" />
@@ -195,6 +195,7 @@
     <Compile Include="Utils\DispatcherDelegate.cs" />
     <Compile Include="Utils\DispatcherUtils.cs" />
     <Compile Include="Utils\FileUtils.cs" />
+    <Compile Include="Utils\KBUtils.cs" />
     <Compile Include="Utils\KeyUtils.cs" />
     <Compile Include="Utils\NumberAverager.cs" />
     <Compile Include="Utils\ResourceDictionaryDataTemplateSelector.cs" />
@@ -471,6 +472,9 @@
       <Project>{888ab152-f517-4365-a9b9-cbfc53fbaeac}</Project>
       <Name>Gpic.Core</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Editor\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SkiaSharp.NativeAssets.macOS.2.88.4-preview.89\build\net462\SkiaSharp.NativeAssets.macOS.targets" Condition="Exists('..\packages\SkiaSharp.NativeAssets.macOS.2.88.4-preview.89\build\net462\SkiaSharp.NativeAssets.macOS.targets')" />

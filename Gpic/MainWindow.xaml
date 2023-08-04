@@ -6,15 +6,70 @@
         xmlns:local="clr-namespace:Gpic"
         xmlns:views="clr-namespace:Gpic.Views"
         xmlns:c="clr-namespace:Gpic.Controls"
-        xmlns:e="clr-namespace:Gpic.Editor"
+        xmlns:e="clr-namespace:Gpic.Core.Editor;assembly=Gpic.Core"
+        xmlns:vm="clr-namespace:Gpic.Core.Editor.ViewModels;assembly=Gpic.Core"
+        xmlns:b="clr-namespace:Gpic.Shortcuts.Bindings"
+        xmlns:ss="clr-namespace:Gpic.Shortcuts" xmlns:converters="clr-namespace:Gpic.Converters"
+        xmlns:attached="clr-namespace:Gpic.Themes.Attached"
         mc:Ignorable="d"
         Title="General Purpose Image Composer" Height="450" Width="800"
         Style="{StaticResource CustomWindowStyleEx}"
-        d:DataContext="{d:DesignInstance e:EditorViewModel}">
+        d:DataContext="{d:DesignInstance vm:EditorViewModel}"
+        ss:UIFocusGroup.IsShortcutInputSource="True"
+        ss:UIFocusGroup.FocusGroupPath="Application/Editor">
+    <b:ShortcutBindingCollection.Collection>
+        <b:ShortcutBindingCollection>
+            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/IncreaseBrushSize" Command="{Binding IncreaseBrushSize, Mode=OneTime}"/>
+            <b:ShortcutCommandBinding ShortcutPath="Application/Editor/DecreaseBrushSize" Command="{Binding DecreaseBrushSize, Mode=OneTime}"/>
+        </b:ShortcutBindingCollection>
+    </b:ShortcutBindingCollection.Collection>
     <Grid>
-        <c:FreeMoveViewPortV2 DataContext="{Binding Canvas}" x:Name="VPViewBox" ClipToBounds="True" Background="{DynamicResource PanelBackground1}"
-                              PanToCursorOnUserZoom="True">
-            <local:SKAsyncViewPort Width="{Binding Width, FallbackValue=0}" Height="{Binding Height, FallbackValue=0}" x:Name="MainCanvas"/>
-        </c:FreeMoveViewPortV2>
+        <DockPanel>
+            <Grid DockPanel.Dock="Left" Width="40" x:Name="ToolBarPanel">
+                <Grid VerticalAlignment="Bottom" Height="40">
+                    <Grid.Resources>
+                        <converters:SKColorToBrushConverter x:Key="SkiaColourToBrushConverter"/>
+                        <Style x:Key="ColourButton" TargetType="{x:Type Button}">
+                            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+                            <Setter Property="BorderThickness" Value="1"/>
+                            <Setter Property="BorderBrush" Value="WhiteSmoke"/>
+                            <Setter Property="Template">
+                                <Setter.Value>
+                                    <ControlTemplate TargetType="{x:Type Button}">
+                                        <Border Opacity="1" x:Name="bd" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" SnapsToDevicePixels="true"/>
+                                        <ControlTemplate.Triggers>
+                                            <Trigger Property="IsMouseOver" Value="true">
+                                                <Setter Property="Opacity" TargetName="bd" Value="0.5"/>
+                                            </Trigger>
+                                            <Trigger Property="IsPressed" Value="true">
+                                                <Setter Property="Opacity" TargetName="bd" Value="0.75"/>
+                                            </Trigger>
+                                        </ControlTemplate.Triggers>
+                                    </ControlTemplate>
+                                </Setter.Value>
+                            </Setter>
+                        </Style>
+                        <converters:BoolToBrushConverter x:Key="PrimaryBorderConverter" TrueValue="WhiteSmoke" FalseValue="OrangeRed"/>
+                        <converters:BoolToBrushConverter x:Key="SecondaryBorderConverter" TrueValue="OrangeRed" FalseValue="WhiteSmoke"/>
+                    </Grid.Resources>
+
+                    <Button Style="{StaticResource ColourButton}" Command="{Binding EditSecondaryColourCommand, Mode=OneTime}" Margin="0,0,5,5"
+                            Background="{Binding SecondaryColour, Converter={StaticResource SkiaColourToBrushConverter}, FallbackValue=Black}"
+                            BorderBrush="{Binding IsToolUsingSecondaryColour, Converter={StaticResource SecondaryBorderConverter}}"
+                            Width="20" Height="20" HorizontalAlignment="Right" VerticalAlignment="Bottom" ToolTip="The secondary colour" BorderThickness="2"/>
+
+                    <Button Style="{StaticResource ColourButton}" Command="{Binding EditPrimaryColourCommand, Mode=OneTime}" Margin="5,5,0,0"
+                            Background="{Binding PrimaryColour, Converter={StaticResource SkiaColourToBrushConverter}, FallbackValue=White}"
+                            BorderBrush="{Binding IsToolUsingSecondaryColour, Converter={StaticResource PrimaryBorderConverter}}"
+                            Width="20" Height="20" HorizontalAlignment="Left" VerticalAlignment="Top" ToolTip="The primary colour" BorderThickness="2"/>
+                </Grid>
+            </Grid>
+            <Grid DockPanel.Dock="Bottom" Height="40">
+                <TextBlock HorizontalAlignment="Left" VerticalAlignment="Center" Text="{Binding PencilBrush.Width, StringFormat={}Pencil Size: {0}}" Padding="5,0"/>
+            </Grid>
+            <c:FreeMoveViewPortV2 DataContext="{Binding MainCanvas}" x:Name="VPViewBox" ClipToBounds="True" Background="{DynamicResource PanelBackground1}" PanToCursorOnUserZoom="True">
+                <local:SKAsyncViewPort Width="{Binding Width, FallbackValue=0}" Height="{Binding Height, FallbackValue=0}" x:Name="MainCanvas"/>
+            </c:FreeMoveViewPortV2>
+        </DockPanel>
     </Grid>
 </views:WindowEx>

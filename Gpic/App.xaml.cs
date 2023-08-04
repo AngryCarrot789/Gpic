@@ -18,8 +18,9 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
+using Gpic.Core.Editor;
+using Gpic.Core.Editor.ViewModels;
 using Gpic.Core.Utils;
-using Gpic.Editor;
 using SkiaSharp;
 
 namespace Gpic {
@@ -153,8 +154,12 @@ namespace Gpic {
             }
 
             await this.SetActivity("Loading Gpic main window...");
+            GpicEditor editor = new GpicEditor();
+            editor.MainCanvas = new GpicCanvas();
+            editor.MainCanvas.SetSizeAndCreateBitmap(1280, 720);
+
             MainWindow window = new MainWindow();
-            window.DataContext = new EditorViewModel();
+            window.Editor = new EditorViewModel(editor);
             this.splash.Close();
             this.MainWindow = window;
             this.ShutdownMode = ShutdownMode.OnMainWindowClose;

@@ -6,68 +6,15 @@ using Gpic.Utils;
 
 namespace Gpic.Shortcuts {
     public static class UIFocusGroup {
-        public static readonly DependencyProperty FocusGroupPathProperty =
-            DependencyProperty.RegisterAttached(
-                "FocusGroupPath",
-                typeof(string),
-                typeof(UIFocusGroup),
-                new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits));
-
-        public static readonly DependencyProperty IsShortcutInputSourceProperty =
-            DependencyProperty.RegisterAttached(
-                "IsShortcutInputSource",
-                typeof(bool),
-                typeof(WPFShortcutManager),
-                new PropertyMetadata(BoolBox.False, WPFShortcutManager.OnIsGlobalShortcutFocusTargetChanged));
-
-        public static readonly DependencyProperty InputBindingUsageIDProperty =
-            DependencyProperty.RegisterAttached(
-                "InputBindingUsageID",
-                typeof(string),
-                typeof(UIFocusGroup),
-                new FrameworkPropertyMetadata(WPFShortcutManager.DEFAULT_USAGE_ID, FrameworkPropertyMetadataOptions.Inherits));
-
-        public static readonly DependencyProperty HasGroupFocusProperty =
-            DependencyProperty.RegisterAttached(
-                "HasGroupFocus",
-                typeof(bool),
-                typeof(UIFocusGroup),
-                new PropertyMetadata(BoolBox.False));
-
-        public static readonly DependencyPropertyKey ShortcutProcessorProperty =
-            DependencyProperty.RegisterAttachedReadOnly(
-                "ShortcutProcessor",
-                typeof(WPFShortcutProcessor),
-                typeof(UIFocusGroup),
-                new PropertyMetadata(default(WPFShortcutProcessor)));
-
-        public static readonly DependencyProperty UsePreviewEventsProperty =
-            DependencyProperty.RegisterAttached(
-                "UsePreviewEvents",
-                typeof(bool),
-                typeof(UIFocusGroup),
-                new PropertyMetadata(BoolBox.False));
-
-        public static readonly DependencyProperty CanProcessTextBoxKeyStrokeProperty =
-            DependencyProperty.RegisterAttached(
-                "CanProcessTextBoxKeyStroke",
-                typeof(bool),
-                typeof(UIFocusGroup),
-                new PropertyMetadata(BoolBox.False));
-
-        public static readonly DependencyProperty CanProcessTextBoxKeyStrokeWithModifiersProperty =
-            DependencyProperty.RegisterAttached(
-                "CanProcessTextBoxKeyStrokeWithModifiers",
-                typeof(bool),
-                typeof(UIFocusGroup),
-                new PropertyMetadata(BoolBox.True));
-
-        public static readonly DependencyProperty CanProcessTextBoxMouseStrokeProperty =
-            DependencyProperty.RegisterAttached(
-                "CanProcessTextBoxMouseStroke",
-                typeof(bool),
-                typeof(UIFocusGroup),
-                new PropertyMetadata(BoolBox.True));
+        public static readonly DependencyProperty FocusGroupPathProperty = DependencyProperty.RegisterAttached("FocusGroupPath", typeof(string), typeof(UIFocusGroup), new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits));
+        public static readonly DependencyProperty IsShortcutInputSourceProperty = DependencyProperty.RegisterAttached("IsShortcutInputSource", typeof(bool), typeof(WPFShortcutManager), new PropertyMetadata(BoolBox.False, WPFShortcutManager.OnIsGlobalShortcutFocusTargetChanged));
+        public static readonly DependencyProperty InputBindingUsageIDProperty = DependencyProperty.RegisterAttached("InputBindingUsageID", typeof(string), typeof(UIFocusGroup), new FrameworkPropertyMetadata(WPFShortcutManager.DEFAULT_USAGE_ID, FrameworkPropertyMetadataOptions.Inherits));
+        public static readonly DependencyProperty HasGroupFocusProperty = DependencyProperty.RegisterAttached("HasGroupFocus", typeof(bool), typeof(UIFocusGroup), new PropertyMetadata(BoolBox.False));
+        internal static readonly DependencyPropertyKey ShortcutProcessorProperty = DependencyProperty.RegisterAttachedReadOnly("ShortcutProcessor", typeof(WPFShortcutProcessor), typeof(UIFocusGroup), new PropertyMetadata(default(WPFShortcutProcessor)));
+        public static readonly DependencyProperty UsePreviewEventsProperty = DependencyProperty.RegisterAttached("UsePreviewEvents", typeof(bool), typeof(UIFocusGroup), new PropertyMetadata(BoolBox.False));
+        public static readonly DependencyProperty CanProcessTextBoxKeyStrokeProperty = DependencyProperty.RegisterAttached("CanProcessTextBoxKeyStroke", typeof(bool), typeof(UIFocusGroup), new PropertyMetadata(BoolBox.False));
+        public static readonly DependencyProperty CanProcessTextBoxKeyStrokeWithModifiersProperty = DependencyProperty.RegisterAttached("CanProcessTextBoxKeyStrokeWithModifiers", typeof(bool), typeof(UIFocusGroup), new PropertyMetadata(BoolBox.True));
+        public static readonly DependencyProperty CanProcessTextBoxMouseStrokeProperty = DependencyProperty.RegisterAttached("CanProcessTextBoxMouseStroke", typeof(bool), typeof(UIFocusGroup), new PropertyMetadata(BoolBox.True));
 
         public delegate void FocusGroupPathChangedEventHandler(string oldPath, string newPath);
         public static event FocusGroupPathChangedEventHandler OnFocusedGroupPathChanged;
@@ -117,9 +64,7 @@ namespace Gpic.Shortcuts {
         /// Gets the shortcut processor associated with the element. Typically, the <see cref="IsShortcutInputSourceProperty"/> must
         /// be set to true in order for this to return a valid value
         /// </summary>
-        public static WPFShortcutProcessor GetShortcutProcessor(DependencyObject element) {
-            return (WPFShortcutProcessor) element.GetValue(ShortcutProcessorProperty.DependencyProperty);
-        }
+        public static WPFShortcutProcessor GetShortcutProcessor(DependencyObject element) => (WPFShortcutProcessor) element.GetValue(ShortcutProcessorProperty.DependencyProperty);
 
         /// <summary>
         /// Sets whether the element should process inputs on the preview/tunnel event instead of the bubble event

@@ -1,6 +1,12 @@
-﻿using System.Windows;
+﻿using System.Numerics;
+using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
+using Gpic.Core.Editor;
+using Gpic.Core.Editor.Brushes;
+using Gpic.Core.Editor.Brushes.ViewModels;
+using Gpic.Core.Editor.ViewModels;
+using Gpic.Utils;
 using Gpic.Views;
 using SkiaSharp;
 
@@ -9,7 +15,10 @@ namespace Gpic {
     /// Interaction logic for MainWindow.xaml
     /// </summary>
     public partial class MainWindow : WindowEx {
-        public SKBitmap DrawingBitmap;
+        public EditorViewModel Editor {
+            get => (EditorViewModel) this.DataContext;
+            set => this.DataContext = value;
+        }
 
         public MainWindow() {
             this.InitializeComponent();
@@ -18,9 +27,16 @@ namespace Gpic {
             this.VPViewBox.FitContentToCenter();
             RenderOptions.SetBitmapScalingMode(this.MainCanvas, BitmapScalingMode.NearestNeighbor);
             RenderOptions.SetEdgeMode(this.MainCanvas, EdgeMode.Aliased);
+
+            this.PreviewKeyDown += this.OnKeyState;
+            this.PreviewKeyUp += this.OnKeyState;
         }
 
-        private int lastX, lastY;
+        private void OnKeyState(object sender, KeyEventArgs e) {
+            if (this.Editor.ActiveBrush is PencilBrushViewModel) {
+                this.Editor.IsToolUsingSecondaryColour = KBUtils.AreModsPressed(ModifierKeys.Control | ModifierKeys.Shift);
+            }
+        }
 
         private void MainCanvasOnMouseMove(object sender, MouseEventArgs e) {
             if (e.LeftButton == MouseButtonState.Pressed) {
@@ -33,31 +49,24 @@ namespace Gpic {
         }
 
         private void DrawPixelAt(Point point) {
-            int x = (int) point.X;
-            int y = (int) point.Y;
-            if (x == this.lastX && y == this.lastY) {
-                return;
-            }
-
-            this.lastX = x;
-            this.lastY = y;
-            this.DrawPixelAt(x, y);
+            this.DrawPixelAt(new Vector2((float) point.X, (float) point.Y));
         }
 
-        private void DrawPixelAt(int x, int y) {
-            if (this.MainCanvas.BeginRender(out SKSurface surface)) {
-                this.DrawingBitmap.SetPixel(x, y, SKColors.Aqua);
-                surface.Canvas.DrawBitmap(this.DrawingBitmap, 0, 0);
+        private void DrawPixelAt(Vector2 point) {
+            GpicEditor editor = this.Editor.Model;
+            if (editor.ActiveBrush != null && this.MainCanvas.BeginRender(out SKSurface surface)) {
+                editor.ActiveBrush.Draw(editor, editor.MainCanvas, point);
+                surface.Canvas.DrawBitmap(this.Editor.MainCanvas.Bitmap, 0, 0);
                 this.MainCanvas.EndRender();
             }
         }
 
         public void SetupInitial() {
             if (this.MainCanvas.BeginRender(out SKSurface surface)) {
-                this.DrawingBitmap = new SKBitmap(this.MainCanvas.FrameInfo);
-                using (SKCanvas canvas = new SKCanvas(this.DrawingBitmap)) {
+                SKBitmap bitmap = this.Editor.MainCanvas.Bitmap;
+                using (SKCanvas canvas = new SKCanvas(bitmap)) {
                     using (SKPaint p = new SKPaint() {Color = SKColors.Black}) {
-                        canvas.DrawRect(new SKRect(0, 0, this.DrawingBitmap.Width, this.DrawingBitmap.Height), p);
+                        canvas.DrawRect(new SKRect(0, 0, bitmap.Width, bitmap.Height), p);
                     }
 
                     using (SKPaint paint = new SKPaint() {Color = SKColors.WhiteSmoke}) {
@@ -71,7 +80,7 @@ namespace Gpic {
                     }
                 }
 
-                surface.Canvas.DrawBitmap(this.DrawingBitmap, 0, 0);
+                surface.Canvas.DrawBitmap(bitmap, 0, 0);
                 this.MainCanvas.EndRender();
             }
         }
