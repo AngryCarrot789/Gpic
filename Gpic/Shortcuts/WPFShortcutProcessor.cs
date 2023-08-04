@@ -66,7 +66,7 @@ namespace Gpic.Shortcuts {
                     this.IsProcessingMouse = true;
                     this.CurrentInputBindingUsageID = UIFocusGroup.GetInputBindingUsageID(focused) ?? WPFShortcutManager.DEFAULT_USAGE_ID;
                     this.SetupContext(sender, focused);
-                    MouseStroke stroke = new MouseStroke((int) e.ChangedButton, (int) Keyboard.Modifiers, e.ClickCount);
+                    MouseStroke stroke = new MouseStroke((int) e.ChangedButton, (int) Keyboard.Modifiers, false, e.ClickCount);
                     if (await this.OnMouseStroke(UIFocusGroup.FocusedGroupPath, stroke)) {
                         e.Handled = true;
                     }
@@ -101,7 +101,7 @@ namespace Gpic.Shortcuts {
                     this.IsProcessingMouse = true;
                     this.CurrentInputBindingUsageID = UIFocusGroup.GetInputBindingUsageID(focused) ?? WPFShortcutManager.DEFAULT_USAGE_ID;
                     this.SetupContext(sender, focused);
-                    MouseStroke stroke = new MouseStroke(button, (int) Keyboard.Modifiers, 0, e.Delta);
+                    MouseStroke stroke = new MouseStroke(button, (int) Keyboard.Modifiers, false, 0, e.Delta);
                     if (await this.OnMouseStroke(UIFocusGroup.FocusedGroupPath, stroke)) {
                         e.Handled = true;
                     }
@@ -172,8 +172,8 @@ namespace Gpic.Shortcuts {
         private static List<ShortcutCommandBinding> GetCommandBindingHierarchy(DependencyObject source) {
             List<ShortcutCommandBinding> list = new List<ShortcutCommandBinding>();
             do {
-                object localValue = source.ReadLocalValue(ShortcutBindingCollection.CollectionProperty);
-                if (localValue is ShortcutBindingCollection collection && collection.Count > 0) {
+                object localValue = source.ReadLocalValue(ShortcutCommandCollection.CollectionProperty);
+                if (localValue is ShortcutCommandCollection collection && collection.Count > 0) {
                     list.AddRange(collection);
                 }
             } while ((source = VisualTreeUtils.GetParent(source)) != null);
@@ -241,6 +241,48 @@ namespace Gpic.Shortcuts {
 
             IoC.BroadcastShortcutActivity($"Activated global shortcut: {shortcut}. Calling {callbacks.Count} callbacks... Complete!");
             return result;
+        }
+
+        private static List<InputStateBinding> GetInputStateBindingHierarchy(DependencyObject source) {
+            List<InputStateBinding> list = new List<InputStateBinding>();
+            do {
+                object localValue = source.ReadLocalValue(InputStateCollection.CollectionProperty);
+                if (localValue is InputStateCollection collection && collection.Count > 0) {
+                    list.AddRange(collection);
+                }
+            } while ((source = VisualTreeUtils.GetParent(source)) != null);
+            return list;
+        }
+
+        protected override async Task OnInputStateTriggered(GroupedInputState input, bool isActive) {
+            await base.OnInputStateTriggered(input, isActive);
+            if (this.CurrentSource == null) {
+                return;
+            }
+
+            System.Diagnostics.Debug.WriteLine($"Processing OnInputStateTriggered");
+            List<InputStateBinding> bindings;
+            if (this.CurrentSource != null && (bindings = GetInputStateBindingHierarchy(this.CurrentSource)).Count > 0) {
+                foreach (InputStateBinding binding in bindings) {
+                    if (!input.FullPath.Equals(binding.InputStatePath)) {
+                        continue;
+                    }
+
+                    binding.IsActive = isActive;
+                    ICommand cmd = binding.Command;
+                    if (cmd == null) {
+                        continue;
+                    }
+
+                    object param = isActive.Box();
+                    if (cmd is BaseAsyncRelayCommand asyncCommand) {
+                        await asyncCommand.TryExecuteAsync(param);
+                    }
+                    else if (cmd.CanExecute(param)) {
+                        cmd.Execute(param);
+                    }
+                }
+            }
         }
 
         public override bool OnNoSuchShortcutForKeyStroke(string @group, in KeyStroke stroke) {

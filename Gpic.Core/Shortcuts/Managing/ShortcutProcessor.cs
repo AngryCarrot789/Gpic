@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -6,6 +7,7 @@ using Gpic.Core.Actions;
 using Gpic.Core.Actions.Contexts;
 using Gpic.Core.Shortcuts.Inputs;
 using Gpic.Core.Shortcuts.Usage;
+using OpenTK.Graphics.OpenGL4;
 
 namespace Gpic.Core.Shortcuts.Managing {
     /// <summary>
@@ -17,6 +19,7 @@ namespace Gpic.Core.Shortcuts.Managing {
     /// </summary>
     public class ShortcutProcessor {
         private readonly List<GroupedShortcut> cachedShortcutList;
+        private readonly List<(GroupedInputState, bool)> cachedInputStateList; // (InputState, shouldActivate)
         private readonly List<GroupedShortcut> cachedInstantActivationList;
 
         /// <summary>
@@ -38,11 +41,13 @@ namespace Gpic.Core.Shortcuts.Managing {
             this.Manager = manager;
             this.ActiveUsages = new Dictionary<IShortcutUsage, GroupedShortcut>();
             this.cachedShortcutList = new List<GroupedShortcut>(8);
+            this.cachedInputStateList = new List<(GroupedInputState, bool)>();
             this.cachedInstantActivationList = new List<GroupedShortcut>(4);
         }
 
         protected void AccumulateShortcuts(IInputStroke stroke, string focusedGroup) {
-            this.Manager.CollectShortcutsWithPrimaryStroke(stroke, focusedGroup, this.cachedShortcutList);
+            GroupEvaulationArgs args = new GroupEvaulationArgs(stroke, this.cachedShortcutList, this.cachedInputStateList, null);
+            this.Manager.DoRootEvaulateShortcutsAndInputStates(ref args, focusedGroup);
         }
 
         protected void AccumulateInstantActivationShortcuts() {
@@ -75,6 +80,7 @@ namespace Gpic.Core.Shortcuts.Managing {
         public async Task<bool> OnKeyStroke(string focusedGroup, KeyStroke stroke) {
             if (this.ActiveUsages.Count < 1) {
                 this.AccumulateShortcuts(stroke, focusedGroup);
+                await this.ProcessInputStates();
                 if (this.cachedShortcutList.Count < 1) {
                     return this.OnNoSuchShortcutForKeyStroke(focusedGroup, stroke);
                 }
@@ -184,6 +190,7 @@ namespace Gpic.Core.Shortcuts.Managing {
         public async Task<bool> OnMouseStroke(string focusedGroup, MouseStroke stroke) {
             if (this.ActiveUsages.Count < 1) {
                 this.AccumulateShortcuts(stroke, focusedGroup);
+                await this.ProcessInputStates();
                 if (this.cachedShortcutList.Count < 1) {
                     return this.OnNoSuchShortcutForMouseStroke(focusedGroup, stroke);
                 }
@@ -278,6 +285,40 @@ namespace Gpic.Core.Shortcuts.Managing {
 
                     return this.OnSecondShortcutUsagesProgressed();
                 }
+            }
+        }
+
+        private async Task ProcessInputStates() {
+            foreach ((GroupedInputState state, bool activate) in this.cachedInputStateList) {
+                if (activate) {
+                    if (state.IsActive) {
+                        continue;
+                    }
+
+                    await this.OnInputStateTriggered(state, true);
+                }
+                else if (state.IsActive) {
+                    await this.OnInputStateTriggered(state, false);
+                }
+            }
+
+            this.cachedInputStateList.Clear();
+        }
+
+        /// <summary>
+        /// Called when an input state should be set to activated or deactivated
+        /// </summary>
+        /// <param name="input"></param>
+        /// <param name="isActive"></param>
+        /// <returns></returns>
+        protected virtual Task OnInputStateTriggered(GroupedInputState input, bool isActive) {
+            if (isActive) {
+                input.IsActive = true;
+                return input.OnActivate();
+            }
+            else {
+                input.IsActive = false;
+                return input.OnDeactivate();
             }
         }
 
@@ -429,13 +470,13 @@ namespace Gpic.Core.Shortcuts.Managing {
         /// <param name="currentUsageKeyStroke"></param>
         /// <returns></returns>
         protected virtual bool ShouldIgnoreKeyStroke(IKeyboardShortcutUsage usage, GroupedShortcut shortcut, KeyStroke input, KeyStroke currentUsageKeyStroke) {
-            if (currentUsageKeyStroke.IsKeyRelease && !input.IsKeyRelease) {
+            if (currentUsageKeyStroke.IsRelease && !input.IsRelease) {
                 if (this.ShouldIgnorePressWhenRequiredStrokeIsRelease(usage, shortcut, input)) {
                     return true;
                 }
             }
 
-            if (input.IsKeyRelease && !usage.IsCompleted && !currentUsageKeyStroke.IsKeyRelease) {
+            if (input.IsRelease && !usage.IsCompleted && !currentUsageKeyStroke.IsRelease) {
                 if (this.ShouldIgnoreReleaseWhenRequiredStrokeIsPress(usage, shortcut, input)) {
                     return true;
                 }

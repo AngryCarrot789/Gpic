@@ -6,15 +6,15 @@ namespace Gpic.Shortcuts.Bindings {
     /// <summary>
     /// A collection of <see cref="ShortcutCommandBinding"/>
     /// </summary>
-    public class ShortcutBindingCollection : FreezableCollection<ShortcutCommandBinding> {
+    public class ShortcutCommandCollection : FreezableCollection<ShortcutCommandBinding> {
         public static readonly DependencyProperty CollectionProperty =
             DependencyProperty.RegisterAttached(
                 "Collection",
-                typeof(ShortcutBindingCollection),
-                typeof(ShortcutBindingCollection),
+                typeof(ShortcutCommandCollection),
+                typeof(ShortcutCommandCollection),
                 new FrameworkPropertyMetadata(null, FrameworkPropertyMetadataOptions.Inherits));
 
-        public ShortcutBindingCollection() {
+        public ShortcutCommandCollection() {
             // ((INotifyCollectionChanged) this).CollectionChanged += this.OnCollectionChanged;
         }
 
@@ -23,17 +23,17 @@ namespace Gpic.Shortcuts.Bindings {
         // }
 
         /// <summary>
-        /// Sets the attached <see cref="ShortcutBindingCollection"/> for an element
+        /// Sets the attached <see cref="ShortcutCommandCollection"/> for an element
         /// </summary>
         /// <param name="element"></param>
         /// <param name="value"></param>
-        public static void SetCollection(DependencyObject element, ShortcutBindingCollection value) => element.SetValue(CollectionProperty, value);
+        public static void SetCollection(DependencyObject element, ShortcutCommandCollection value) => element.SetValue(CollectionProperty, value);
 
         /// <summary>
-        /// Gets the attached <see cref="ShortcutBindingCollection"/> for an element
+        /// Gets the attached <see cref="ShortcutCommandCollection"/> for an element
         /// </summary>
         /// <param name="element"></param>
         /// <returns></returns>
-        public static ShortcutBindingCollection GetCollection(DependencyObject element) => (ShortcutBindingCollection) element.GetValue(CollectionProperty);
+        public static ShortcutCommandCollection GetCollection(DependencyObject element) => (ShortcutCommandCollection) element.GetValue(CollectionProperty);
     }
 }

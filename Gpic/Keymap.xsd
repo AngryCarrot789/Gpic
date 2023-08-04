@@ -248,9 +248,29 @@
                 <xs:attribute type="MouseButtonType" name="Button"/>
                 <xs:attribute type="xs:int" name="ClickCount"/>
                 <xs:attribute type="xs:int" name="WheelDelta"/>
-                <xs:attribute type="xs:int" name="CustomParam"/>
             </xs:extension>
         </xs:simpleContent>
+    </xs:complexType>
+    <xs:complexType name="GroupType">
+        <xs:choice maxOccurs="unbounded" minOccurs="0">
+            <xs:element type="GroupType" name="Group" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element type="ShortcutType" name="Shortcut" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element type="InputStateType" name="InputState" maxOccurs="unbounded" minOccurs="0"/>
+        </xs:choice>
+        <xs:attribute type="xs:string" name="Name"/>
+        <xs:attribute type="xs:boolean" name="Global"/>
+        <xs:attribute type="xs:boolean" name="Inherit"/>
+        <xs:attribute type="xs:string" name="Description"/>
+        <xs:attribute type="xs:string" name="DisplayName"/>
+    </xs:complexType>
+    <xs:complexType name="Shortcut.ContextType">
+    <xs:choice>
+        <xs:element type="FlagType" name="Flag"/>
+        <xs:element type="FlagsType" name="Flags"/>
+        <xs:element type="EntryType" name="Entry"/>
+        <xs:element type="FloatEntryType" name="FloatEntry"/>
+        <xs:element type="IntEntryType" name="IntEntry"/>
+    </xs:choice>
     </xs:complexType>
     <xs:complexType name="ShortcutType">
         <xs:choice>
@@ -266,26 +286,16 @@
         <xs:attribute type="xs:string" name="DisplayName"/>
         <xs:attribute type="RepeatModeType" name="RepeatMode"/>
     </xs:complexType>
-    <xs:complexType name="GroupType">
-        <xs:choice maxOccurs="unbounded" minOccurs="0">
-            <xs:element type="GroupType" name="Group" maxOccurs="unbounded" minOccurs="0"/>
-            <xs:element type="ShortcutType" name="Shortcut" maxOccurs="unbounded" minOccurs="0"/>
-        </xs:choice>
-        <xs:attribute type="xs:string" name="Name"/>
-        <xs:attribute type="xs:boolean" name="Global"/>
-        <xs:attribute type="xs:boolean" name="Inherit"/>
-        <xs:attribute type="xs:string" name="Description"/>
-        <xs:attribute type="xs:string" name="DisplayName"/>
-    </xs:complexType>
-    <xs:complexType name="Shortcut.ContextType">
+    <xs:complexType name="InputStateType">
         <xs:choice>
-            <xs:element type="FlagType" name="Flag"/>
-            <xs:element type="FlagsType" name="Flags"/>
-            <xs:element type="EntryType" name="Entry"/>
-            <xs:element type="FloatEntryType" name="FloatEntry"/>
-            <xs:element type="IntEntryType" name="IntEntry"/>
+            <xs:element type="KeyStrokeType" name="InputState.ActivationKeyStroke" minOccurs="0"/>
+            <xs:element type="KeyStrokeType" name="InputState.DeactivationKeyStroke" minOccurs="0"/>
+            <xs:element type="MouseStrokeType" name="InputState.ActivationMouseStroke" minOccurs="0"/>
+            <xs:element type="MouseStrokeType" name="InputState.DeactivationMouseStroke" minOccurs="0"/>
         </xs:choice>
+        <xs:attribute type="xs:string" name="Name" use="required"/>
     </xs:complexType>
+
     <xs:complexType name="FlagType">
         <xs:simpleContent>
             <xs:extension base="xs:boolean">
@@ -327,6 +337,7 @@
         <xs:choice>
             <xs:element type="GroupType" name="Group" maxOccurs="unbounded" minOccurs="0"/>
             <xs:element type="ShortcutType" name="Shortcut" maxOccurs="unbounded" minOccurs="0"/>
+            <xs:element type="InputStateType" name="InputState" maxOccurs="unbounded" minOccurs="0"/>
         </xs:choice>
     </xs:complexType>
 </xs:schema>

@@ -27,6 +27,10 @@ namespace Gpic.Core.Shortcuts.Managing {
             this.Root = ShortcutGroup.CreateRoot();
         }
 
+        public void DoRootEvaulateShortcutsAndInputStates(ref GroupEvaulationArgs args, string focus, bool allowDuplicateInheritedShortcuts = false) {
+            this.root.DoEvaulateShortcutsAndInputStates(ref args, focus, allowDuplicateInheritedShortcuts);
+        }
+
         public ShortcutGroup FindGroupByPath(string path) {
             return this.Root.GetGroupByPath(path);
         }
@@ -112,11 +116,6 @@ namespace Gpic.Core.Shortcuts.Managing {
                     this.pathToShortcut[shortcut.FullPath] = shortcut;
                 }
             }
-        }
-
-        public virtual void CollectShortcutsWithPrimaryStroke(IInputStroke stroke, string focus, List<GroupedShortcut> shortcuts, Predicate<GroupedShortcut> filter = null) {
-            ShortcutCollectorArgs args = new ShortcutCollectorArgs(stroke, shortcuts, filter);
-            this.root.CollectShortcutsWithPrimaryStroke(ref args, focus);
         }
 
         public IEnumerable<GroupedShortcut> FindShortcutsByPaths(IEnumerable<string> paths) {

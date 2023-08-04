@@ -33,9 +33,9 @@ namespace Gpic {
         }
 
         private void OnKeyState(object sender, KeyEventArgs e) {
-            if (this.Editor.ActiveBrush is PencilBrushViewModel) {
-                this.Editor.IsToolUsingSecondaryColour = KBUtils.AreModsPressed(ModifierKeys.Control | ModifierKeys.Shift);
-            }
+            // if (this.Editor.ActiveBrush is PencilBrushViewModel) {
+            //     this.Editor.IsToolUsingSecondaryColour = KBUtils.AreModsPressed(ModifierKeys.Control | ModifierKeys.Shift);
+            // }
         }
 
         private void MainCanvasOnMouseMove(object sender, MouseEventArgs e) {

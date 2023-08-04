@@ -34,6 +34,10 @@
             <Shortcut Name="DecreaseBrushSize">
                 <KeyStroke Key="OemOpenBrackets"/>
             </Shortcut>
+
+            <InputState Name="UseSecondaryColourState">
+                <InputState.ActivationKeyStroke Key="Q"/>
+            </InputState>
         </Group>
     </Group>
 </KeyMap>

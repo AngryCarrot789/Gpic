@@ -17,12 +17,17 @@
         d:DataContext="{d:DesignInstance vm:EditorViewModel}"
         ss:UIFocusGroup.IsShortcutInputSource="True"
         ss:UIFocusGroup.FocusGroupPath="Application/Editor">
-    <b:ShortcutBindingCollection.Collection>
-        <b:ShortcutBindingCollection>
+    <b:ShortcutCommandCollection.Collection>
+        <b:ShortcutCommandCollection>
             <b:ShortcutCommandBinding ShortcutPath="Application/Editor/IncreaseBrushSize" Command="{Binding IncreaseBrushSize, Mode=OneTime}"/>
             <b:ShortcutCommandBinding ShortcutPath="Application/Editor/DecreaseBrushSize" Command="{Binding DecreaseBrushSize, Mode=OneTime}"/>
-        </b:ShortcutBindingCollection>
-    </b:ShortcutBindingCollection.Collection>
+        </b:ShortcutCommandCollection>
+    </b:ShortcutCommandCollection.Collection>
+    <b:InputStateCollection.Collection>
+        <b:InputStateCollection>
+            <b:InputStateBinding InputStatePath="Application/Editor/UseSecondaryColourState" IsActive="{Binding IsToolUsingSecondaryColour, Mode=OneWayToSource}"/>
+        </b:InputStateCollection>
+    </b:InputStateCollection.Collection>
     <Grid>
         <DockPanel>
             <Grid DockPanel.Dock="Left" Width="40" x:Name="ToolBarPanel">

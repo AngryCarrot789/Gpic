@@ -147,7 +147,9 @@
     <Compile Include="Services\ColourPickerService.cs" />
     <Compile Include="Services\WinExplorerService.cs" />
     <Compile Include="Shortcuts\ActivationHandlerReference.cs" />
-    <Compile Include="Shortcuts\Bindings\ShortcutBindingCollection.cs" />
+    <Compile Include="Shortcuts\Bindings\InputStateBinding.cs" />
+    <Compile Include="Shortcuts\Bindings\InputStateCollection.cs" />
+    <Compile Include="Shortcuts\Bindings\ShortcutCommandCollection.cs" />
     <Compile Include="Shortcuts\Bindings\ShortcutCommandBinding.cs" />
     <Compile Include="Shortcuts\Converters\ActionIdToGestureConverter.cs" />
     <Compile Include="Shortcuts\Converters\GlobalUpdateShortcutGestureConverter.cs" />
@@ -472,9 +474,6 @@
       <Project>{888ab152-f517-4365-a9b9-cbfc53fbaeac}</Project>
       <Name>Gpic.Core</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Editor\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\SkiaSharp.NativeAssets.macOS.2.88.4-preview.89\build\net462\SkiaSharp.NativeAssets.macOS.targets" Condition="Exists('..\packages\SkiaSharp.NativeAssets.macOS.2.88.4-preview.89\build\net462\SkiaSharp.NativeAssets.macOS.targets')" />
