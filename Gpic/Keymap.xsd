@@ -211,18 +211,41 @@
             <xs:pattern value="(CTRL|SHIFT|ALT|WIN)(\+(CTRL|SHIFT|ALT|WIN))*"/>
         </xs:restriction>
     </xs:simpleType>
-    <xs:simpleType name="MouseButtonType" final="restriction">
+
+    <xs:simpleType name="MouseButtonTypeEnumerationOnly">
         <xs:restriction base="xs:string">
             <xs:enumeration value="Left"/>
             <xs:enumeration value="Middle"/>
             <xs:enumeration value="Right"/>
-            <xs:enumeration value="X1"/>
-            <xs:enumeration value="X2"/>
+            <xs:enumeration value="X1">
+                <xs:annotation>
+                    <xs:documentation>
+                        The X1 mouse button, AKA the navigate back button. A lot of "simple" mice do not have this button
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
+            <xs:enumeration value="X2">
+                <xs:annotation>
+                    <xs:documentation>
+                        The X2 mouse button, AKA the navigate forward button. A lot of "simple" mice do not have this button
+                    </xs:documentation>
+                </xs:annotation>
+            </xs:enumeration>
             <xs:enumeration value="WheelUp"/>
             <xs:enumeration value="WheelDown"/>
-            <xs:pattern value="[0-9]*"/>
         </xs:restriction>
     </xs:simpleType>
+
+    <xs:simpleType name="MouseButtonType" final="restriction">
+        <xs:union memberTypes="MouseButtonTypeEnumerationOnly">
+            <xs:simpleType>
+                <xs:restriction base="xs:string">
+                    <xs:pattern value="[0-9]*"/>
+                </xs:restriction>
+            </xs:simpleType>
+        </xs:union>
+    </xs:simpleType>
+
     <xs:simpleType name="RepeatModeType" final="restriction">
         <xs:restriction base="xs:string">
             <xs:enumeration value="Ignored"/>
@@ -232,6 +255,11 @@
     </xs:simpleType>
     <xs:element name="KeyMap" type="KeyMapType"/>
     <xs:complexType name="KeyStrokeType">
+        <xs:annotation>
+            <xs:documentation>
+                A key stroke is an input stroke triggered by a keyboard key being pressed, released, or repeated
+            </xs:documentation>
+        </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:string">
                 <xs:attribute type="xs:int" name="KeyCode"/>
@@ -242,6 +270,11 @@
         </xs:simpleContent>
     </xs:complexType>
     <xs:complexType name="MouseStrokeType">
+        <xs:annotation>
+            <xs:documentation>
+                A mouse stroke is an input stroke triggered by a mouse button being clicked or the mouse wheel
+            </xs:documentation>
+        </xs:annotation>
         <xs:simpleContent>
             <xs:extension base="xs:string">
                 <xs:attribute type="ModifierKeyType" name="Mods"/>
@@ -252,10 +285,10 @@
         </xs:simpleContent>
     </xs:complexType>
     <xs:complexType name="GroupType">
-        <xs:choice maxOccurs="unbounded" minOccurs="0">
-            <xs:element type="GroupType" name="Group" maxOccurs="unbounded" minOccurs="0"/>
-            <xs:element type="ShortcutType" name="Shortcut" maxOccurs="unbounded" minOccurs="0"/>
-            <xs:element type="InputStateType" name="InputState" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element type="GroupType" name="Group"/>
+            <xs:element type="ShortcutType" name="Shortcut"/>
+            <xs:element type="InputStateType" name="InputState"/>
         </xs:choice>
         <xs:attribute type="xs:string" name="Name"/>
         <xs:attribute type="xs:boolean" name="Global"/>
@@ -264,19 +297,19 @@
         <xs:attribute type="xs:string" name="DisplayName"/>
     </xs:complexType>
     <xs:complexType name="Shortcut.ContextType">
-    <xs:choice>
-        <xs:element type="FlagType" name="Flag"/>
-        <xs:element type="FlagsType" name="Flags"/>
-        <xs:element type="EntryType" name="Entry"/>
-        <xs:element type="FloatEntryType" name="FloatEntry"/>
-        <xs:element type="IntEntryType" name="IntEntry"/>
-    </xs:choice>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element type="FlagType" name="Flag"/>
+            <xs:element type="FlagsType" name="Flags"/>
+            <xs:element type="EntryType" name="Entry"/>
+            <xs:element type="FloatEntryType" name="FloatEntry"/>
+            <xs:element type="IntEntryType" name="IntEntry"/>
+        </xs:choice>
     </xs:complexType>
     <xs:complexType name="ShortcutType">
-        <xs:choice>
-            <xs:element type="Shortcut.ContextType" name="Shortcut.Context" minOccurs="0"/>
-            <xs:element type="KeyStrokeType" name="KeyStroke" minOccurs="0"/>
-            <xs:element type="MouseStrokeType" name="MouseStroke" minOccurs="0"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element type="Shortcut.ContextType" name="Shortcut.Context"/>
+            <xs:element type="KeyStrokeType" name="KeyStroke"/>
+            <xs:element type="MouseStrokeType" name="MouseStroke"/>
         </xs:choice>
         <xs:attribute type="xs:string" name="Name" use="required"/>
         <xs:attribute type="xs:string" name="ActionId"/>
@@ -287,11 +320,11 @@
         <xs:attribute type="RepeatModeType" name="RepeatMode"/>
     </xs:complexType>
     <xs:complexType name="InputStateType">
-        <xs:choice>
-            <xs:element type="KeyStrokeType" name="InputState.ActivationKeyStroke" minOccurs="0"/>
-            <xs:element type="KeyStrokeType" name="InputState.DeactivationKeyStroke" minOccurs="0"/>
-            <xs:element type="MouseStrokeType" name="InputState.ActivationMouseStroke" minOccurs="0"/>
-            <xs:element type="MouseStrokeType" name="InputState.DeactivationMouseStroke" minOccurs="0"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element type="KeyStrokeType" name="InputState.ActivationKeyStroke"/>
+            <xs:element type="KeyStrokeType" name="InputState.DeactivationKeyStroke"/>
+            <xs:element type="MouseStrokeType" name="InputState.ActivationMouseStroke"/>
+            <xs:element type="MouseStrokeType" name="InputState.DeactivationMouseStroke"/>
         </xs:choice>
         <xs:attribute type="xs:string" name="Name" use="required"/>
     </xs:complexType>
@@ -334,10 +367,10 @@
         </xs:simpleContent>
     </xs:complexType>
     <xs:complexType name="KeyMapType">
-        <xs:choice>
-            <xs:element type="GroupType" name="Group" maxOccurs="unbounded" minOccurs="0"/>
-            <xs:element type="ShortcutType" name="Shortcut" maxOccurs="unbounded" minOccurs="0"/>
-            <xs:element type="InputStateType" name="InputState" maxOccurs="unbounded" minOccurs="0"/>
+        <xs:choice minOccurs="0" maxOccurs="unbounded">
+            <xs:element type="GroupType" name="Group"/>
+            <xs:element type="ShortcutType" name="Shortcut"/>
+            <xs:element type="InputStateType" name="InputState"/>
         </xs:choice>
     </xs:complexType>
 </xs:schema>

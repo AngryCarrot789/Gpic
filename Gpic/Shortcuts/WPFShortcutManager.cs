@@ -147,13 +147,12 @@ namespace Gpic.Shortcuts {
         }
 
         private static void HandleRootMouseUp(object sender, MouseButtonEventArgs e, bool isPreviewEvent) {
-            // if (e.OriginalSource is DependencyObject hit) {
-            //     string focusedPath = UIFocusGroup.ProcessFocusGroupChange(hit);
-            //     MouseStroke stroke = new MouseStroke((int) e.ChangedButton, (int) Keyboard.Modifiers, e.ClickCount);
-            //     if (Instance.OnMouseStroke(focusedPath, stroke)) {
-            //         e.Handled = true;
-            //     }
-            // }
+            if (isPreviewEvent && e.OriginalSource is DependencyObject hit) {
+                UIFocusGroup.ProcessFocusGroupChange(hit);
+            }
+
+            WPFShortcutProcessor processor = GetShortcutProcessorForUIObject(sender);
+            processor?.OnWindowMouseUp(sender, e, isPreviewEvent);
         }
 
         private static void HandleRootMouseWheel(object sender, MouseWheelEventArgs e, bool isPreviewEvent) {

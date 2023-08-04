@@ -75,11 +75,15 @@ namespace Gpic.Core.Shortcuts.Inputs {
             return this.MouseButton == other.MouseButton &&
                    this.Modifiers == other.Modifiers &&
                    (this.ClickCount == -1 || other.ClickCount == -1 || this.ClickCount == other.ClickCount) &&
-                   this.WheelDelta == other.WheelDelta;
+                   this.WheelDelta == other.WheelDelta && this.IsRelease == other.IsRelease;
         }
 
         public bool EqualsWithoutClick(MouseStroke other) {
             return this.MouseButton == other.MouseButton && this.Modifiers == other.Modifiers && this.WheelDelta == other.WheelDelta;
+        }
+
+        public bool EqualsWithRelease(MouseStroke stroke) {
+            return this.Equals(stroke);
         }
 
         public override int GetHashCode() {

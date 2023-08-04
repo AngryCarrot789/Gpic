@@ -160,7 +160,7 @@ namespace Gpic.Core.Shortcuts.Managing {
                 }
 
                 if (requireGlobal && !shortcut.IsGlobal) {
-                    // I actually can't remember if this.FullPath should be used here or shortcut.Path
+                    // I actually can't remember if this.FullPath should be used here or shortcut.FullPath
                     if (shortcut.IsInherited && IsFocusPathInScope(this.FullPath, focus, true)) {
                         if (!allowDuplicateInheritedShortcuts && FindPrimaryStroke(args.shortcuts, shortcut.Shortcut.PrimaryStroke)) {
                             continue;

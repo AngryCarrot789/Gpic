@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Input;
@@ -45,8 +46,8 @@ namespace Gpic.Core.Shortcuts.Managing {
             this.cachedInstantActivationList = new List<GroupedShortcut>(4);
         }
 
-        protected void AccumulateShortcuts(IInputStroke stroke, string focusedGroup) {
-            GroupEvaulationArgs args = new GroupEvaulationArgs(stroke, this.cachedShortcutList, this.cachedInputStateList, null);
+        protected void AccumulateShortcuts(IInputStroke stroke, string focusedGroup, Predicate<GroupedShortcut> filter = null) {
+            GroupEvaulationArgs args = new GroupEvaulationArgs(stroke, this.cachedShortcutList, this.cachedInputStateList, filter);
             this.Manager.DoRootEvaulateShortcutsAndInputStates(ref args, focusedGroup);
         }
 
@@ -77,9 +78,13 @@ namespace Gpic.Core.Shortcuts.Managing {
             }
         }
 
-        public async Task<bool> OnKeyStroke(string focusedGroup, KeyStroke stroke) {
+        private static readonly Predicate<GroupedShortcut> RepeatedFilter = x => x.RepeatMode != RepeatMode.NonRepeat;
+        private static readonly Predicate<GroupedShortcut> NotRepeatedFilter = x => x.RepeatMode != RepeatMode.RepeatOnly;
+        private static readonly Predicate<GroupedShortcut> BlockAllFilter = x => false;
+
+        public async Task<bool> OnKeyStroke(string focusedGroup, KeyStroke stroke, bool isRepeat) {
             if (this.ActiveUsages.Count < 1) {
-                this.AccumulateShortcuts(stroke, focusedGroup);
+                this.AccumulateShortcuts(stroke, focusedGroup, isRepeat ? RepeatedFilter : NotRepeatedFilter);
                 await this.ProcessInputStates();
                 if (this.cachedShortcutList.Count < 1) {
                     return this.OnNoSuchShortcutForKeyStroke(focusedGroup, stroke);
@@ -288,10 +293,16 @@ namespace Gpic.Core.Shortcuts.Managing {
             }
         }
 
+        public async Task ProcessInputStatesForMouseUp(string focusedGroup, MouseStroke stroke) {
+            this.AccumulateShortcuts(stroke, focusedGroup, BlockAllFilter);
+            Debug.Assert(this.cachedShortcutList.Count == 0, "Expected the block all filter to work properly");
+            await this.ProcessInputStates();
+        }
+
         private async Task ProcessInputStates() {
             foreach ((GroupedInputState state, bool activate) in this.cachedInputStateList) {
                 if (activate) {
-                    if (state.IsActive) {
+                    if (state.IsActive) { // most likely repeated input from OS
                         continue;
                     }
 

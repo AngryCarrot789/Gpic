@@ -80,6 +80,29 @@ namespace Gpic.Shortcuts {
             }
         }
 
+        public async void OnWindowMouseUp(object sender, MouseButtonEventArgs e, bool isPreviewEvent) {
+            if (!this.IsProcessingMouse && e.OriginalSource is DependencyObject focused) {
+                if (!CanProcessEventType(focused, isPreviewEvent) || !CanProcessMouseEvent(focused, e)) {
+                    return;
+                }
+
+                UIFocusGroup.ProcessFocusGroupChange(focused);
+
+                try {
+                    this.IsProcessingMouse = true;
+                    this.CurrentInputBindingUsageID = UIFocusGroup.GetInputBindingUsageID(focused) ?? WPFShortcutManager.DEFAULT_USAGE_ID;
+                    this.CurrentSource = focused; // no need to generate the data context as it isn't used
+                    MouseStroke stroke = new MouseStroke((int) e.ChangedButton, (int) Keyboard.Modifiers, true, e.ClickCount);
+                    await this.ProcessInputStatesForMouseUp(UIFocusGroup.FocusedGroupPath, stroke);
+                }
+                finally {
+                    this.IsProcessingMouse = false;
+                    this.CurrentSource = null;
+                    this.CurrentInputBindingUsageID = WPFShortcutManager.DEFAULT_USAGE_ID;
+                }
+            }
+        }
+
         public async void OnWindowMouseWheel(object sender, MouseWheelEventArgs e, bool isPreviewEvent) {
             if (!this.IsProcessingMouse && e.OriginalSource is DependencyObject focused) {
                 if (!CanProcessEventType(focused, isPreviewEvent) || !CanProcessMouseEvent(focused, e)) {
@@ -145,7 +168,7 @@ namespace Gpic.Shortcuts {
                 this.CurrentInputBindingUsageID = UIFocusGroup.GetInputBindingUsageID(focused) ?? WPFShortcutManager.DEFAULT_USAGE_ID;
                 this.SetupContext(sender, focused);
                 KeyStroke stroke = new KeyStroke((int) key, (int) Keyboard.Modifiers, isRelease);
-                if (await processor.OnKeyStroke(UIFocusGroup.FocusedGroupPath, stroke)) {
+                if (await processor.OnKeyStroke(UIFocusGroup.FocusedGroupPath, stroke, e.IsRepeat)) {
                     e.Handled = true;
                 }
             }
@@ -260,7 +283,6 @@ namespace Gpic.Shortcuts {
                 return;
             }
 
-            System.Diagnostics.Debug.WriteLine($"Processing OnInputStateTriggered");
             List<InputStateBinding> bindings;
             if (this.CurrentSource != null && (bindings = GetInputStateBindingHierarchy(this.CurrentSource)).Count > 0) {
                 foreach (InputStateBinding binding in bindings) {
@@ -268,6 +290,7 @@ namespace Gpic.Shortcuts {
                         continue;
                     }
 
+                    // Could also add activated/deactivated events
                     binding.IsActive = isActive;
                     ICommand cmd = binding.Command;
                     if (cmd == null) {

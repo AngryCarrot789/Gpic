@@ -56,13 +56,9 @@ namespace Gpic.Core.Shortcuts.Managing {
             this.DeactivationStroke = deactivationStroke;
         }
 
-        public Task OnDeactivate() {
-            return Task.CompletedTask;
-        }
+        public Task OnDeactivate() => Task.CompletedTask;
 
-        public Task OnActivate() {
-            return Task.CompletedTask;
-        }
+        public Task OnActivate() => Task.CompletedTask;
 
         public override string ToString() {
             return $"{nameof(GroupedInputState)} ({this.FullPath}: {(this.IsActive ? "pressed" : "released")} [{this.activationStroke}, {this.deactivationStroke}])";

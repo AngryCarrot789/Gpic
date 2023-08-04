@@ -28,7 +28,7 @@
             </Shortcut>
 
             <Shortcut Name="IncreaseBrushSize">
-                <KeyStroke Key="OemCloseBrackets"/>
+                 <KeyStroke Key="OemCloseBrackets"/>
             </Shortcut>
 
             <Shortcut Name="DecreaseBrushSize">
@@ -36,6 +36,9 @@
             </Shortcut>
 
             <InputState Name="UseSecondaryColourState">
+                <!--
+                <InputState.ActivationMouseStroke Button="X1"/>
+                -->
                 <InputState.ActivationKeyStroke Key="Q"/>
             </InputState>
         </Group>
