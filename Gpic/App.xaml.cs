@@ -19,6 +19,8 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Threading;
 using Gpic.Core.Utils;
+using Gpic.Editor;
+using SkiaSharp;
 
 namespace Gpic {
     /// <summary>
@@ -152,6 +154,7 @@ namespace Gpic {
 
             await this.SetActivity("Loading Gpic main window...");
             MainWindow window = new MainWindow();
+            window.DataContext = new EditorViewModel();
             this.splash.Close();
             this.MainWindow = window;
             this.ShutdownMode = ShutdownMode.OnMainWindowClose;
@@ -163,6 +166,7 @@ namespace Gpic {
         }
 
         public async Task OnVideoEditorLoaded(MainWindow editor) {
+            editor.SetupInitial();
         }
     }
 }

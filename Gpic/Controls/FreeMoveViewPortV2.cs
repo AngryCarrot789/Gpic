@@ -109,7 +109,7 @@ namespace Gpic.Controls {
         /// </summary>
         public bool PanToCursorOnUserZoom {
             get => (bool) this.GetValue(PanToCursorOnUserZoomProperty);
-            set => this.SetValue(PanToCursorOnUserZoomProperty, value);
+            set => this.SetValue(PanToCursorOnUserZoomProperty, value.Box());
         }
 
         protected override int VisualChildrenCount => 1;

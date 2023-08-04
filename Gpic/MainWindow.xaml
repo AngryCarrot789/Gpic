@@ -5,10 +5,16 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:Gpic"
         xmlns:views="clr-namespace:Gpic.Views"
+        xmlns:c="clr-namespace:Gpic.Controls"
+        xmlns:e="clr-namespace:Gpic.Editor"
         mc:Ignorable="d"
         Title="General Purpose Image Composer" Height="450" Width="800"
-        Style="{StaticResource CustomWindowStyleEx}">
+        Style="{StaticResource CustomWindowStyleEx}"
+        d:DataContext="{d:DesignInstance e:EditorViewModel}">
     <Grid>
-        
+        <c:FreeMoveViewPortV2 DataContext="{Binding Canvas}" x:Name="VPViewBox" ClipToBounds="True" Background="{DynamicResource PanelBackground1}"
+                              PanToCursorOnUserZoom="True">
+            <local:SKAsyncViewPort Width="{Binding Width, FallbackValue=0}" Height="{Binding Height, FallbackValue=0}" x:Name="MainCanvas"/>
+        </c:FreeMoveViewPortV2>
     </Grid>
 </views:WindowEx>

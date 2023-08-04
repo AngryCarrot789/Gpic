@@ -8,6 +8,8 @@ namespace Gpic {
     public sealed class SKAsyncViewPort : FrameworkElement {
         private readonly bool designMode;
         private WriteableBitmap bitmap;
+        private SKSurface targetSurface;
+        private SKImageInfo skImageInfo;
         private bool ignorePixelScaling;
 
         /// <summary>Gets the current canvas size.</summary>
@@ -26,9 +28,6 @@ namespace Gpic {
             }
         }
 
-        private volatile SKSurface targetSurface;
-        private SKImageInfo skImageInfo;
-
         public SKImageInfo FrameInfo => this.skImageInfo;
 
         public SKAsyncViewPort() => this.designMode = DesignerProperties.GetIsInDesignMode(this);
@@ -41,8 +40,7 @@ namespace Gpic {
             }
 
             SKSizeI pixelSize = this.CreateSize(out SKSizeI unscaledSize, out double scaleX, out double scaleY, source);
-            SKSizeI size2 = this.IgnorePixelScaling ? unscaledSize : pixelSize;
-            this.CanvasSize = size2;
+            this.CanvasSize = this.ignorePixelScaling ? unscaledSize : pixelSize;
             if (pixelSize.Width <= 0 || pixelSize.Height <= 0) {
                 surface = null;
                 return false;
@@ -50,18 +48,16 @@ namespace Gpic {
 
             SKImageInfo frameInfo = new SKImageInfo(pixelSize.Width, pixelSize.Height, SKImageInfo.PlatformColorType, SKAlphaType.Premul);
             this.skImageInfo = frameInfo;
-            if (this.bitmap == null || frameInfo.Width != this.bitmap.PixelWidth || frameInfo.Height != this.bitmap.PixelHeight) {
-                this.bitmap = new WriteableBitmap(
-                    frameInfo.Width, pixelSize.Height,
-                    scaleX == 1d ? 96d : (96d * scaleX),
-                    scaleY == 1d ? 96d : (96d * scaleY),
-                    PixelFormats.Pbgra32, null);
+
+            WriteableBitmap bmp = this.bitmap;
+            if (bmp == null || frameInfo.Width != bmp.PixelWidth || frameInfo.Height != bmp.PixelHeight) {
+                this.bitmap = bmp = new WriteableBitmap(frameInfo.Width, frameInfo.Height, scaleX * 96d, scaleY * 96d, PixelFormats.Pbgra32, null);
             }
 
-            this.bitmap.Lock();
+            bmp.Lock();
 
-            this.targetSurface = surface = SKSurface.Create(frameInfo, this.bitmap.BackBuffer, this.bitmap.BackBufferStride);
-            if (this.IgnorePixelScaling) {
+            this.targetSurface = surface = SKSurface.Create(frameInfo, bmp.BackBuffer, bmp.BackBufferStride);
+            if (this.ignorePixelScaling) {
                 SKCanvas canvas = surface.Canvas;
                 canvas.Scale((float) scaleX, (float) scaleY);
                 canvas.Save();

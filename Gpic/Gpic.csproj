@@ -135,6 +135,8 @@
     <Compile Include="AttachedProperties\ToggleButtonHelper.cs" />
     <Compile Include="AttachedProperties\TopmostFocus.cs" />
     <Compile Include="BindingErrorListener.cs" />
+    <Compile Include="Editor\Canvases\CanvasViewModel.cs" />
+    <Compile Include="Editor\EditorViewModel.cs" />
     <Compile Include="PropertyEditing\PropertyEditor.cs" />
     <Compile Include="PropertyEditing\PropertyEditorItemContainer.cs" />
     <Compile Include="PropertyEditing\PropertyEditorItemsControl.cs" />
@@ -455,18 +457,6 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Resources\Shaders\pink.frag" />
-    <None Include="Resources\Shaders\pink.vert" />
-    <None Include="Resources\Shaders\rgb.frag" />
-    <None Include="Resources\Shaders\rgb.vert" />
-    <None Include="Resources\Shaders\sky.frag" />
-    <None Include="Resources\Shaders\sky.vert" />
-    <None Include="Resources\Shaders\texture.frag" />
-    <None Include="Resources\Shaders\texture.vert" />
-    <None Include="Resources\Shaders\textureatlas.frag" />
-    <None Include="Resources\Shaders\textureatlas.vert" />
-    <None Include="Resources\Shaders\xyz.frag" />
-    <None Include="Resources\Shaders\xyz.vert" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />

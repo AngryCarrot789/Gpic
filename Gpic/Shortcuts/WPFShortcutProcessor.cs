@@ -12,6 +12,7 @@ using Gpic.Core.Shortcuts.Managing;
 using Gpic.Core.Shortcuts.Usage;
 using Gpic.Core.Utils;
 using Gpic.Shortcuts.Bindings;
+using Gpic.Utils;
 
 namespace Gpic.Shortcuts {
     public class WPFShortcutProcessor : ShortcutProcessor {
@@ -168,10 +169,22 @@ namespace Gpic.Shortcuts {
             this.CurrentSource = obj;
         }
 
+        private static List<ShortcutCommandBinding> GetCommandBindingHierarchy(DependencyObject source) {
+            List<ShortcutCommandBinding> list = new List<ShortcutCommandBinding>();
+            do {
+                object localValue = source.ReadLocalValue(ShortcutBindingCollection.CollectionProperty);
+                if (localValue is ShortcutBindingCollection collection && collection.Count > 0) {
+                    list.AddRange(collection);
+                }
+            } while ((source = VisualTreeUtils.GetParent(source)) != null);
+            return list;
+        }
+
         public override async Task<bool> ActivateShortcut(GroupedShortcut shortcut) {
             bool finalResult = false;
-            if (this.CurrentSource?.GetValue(ShortcutBindingCollection.CollectionProperty) is ShortcutBindingCollection collection) {
-                foreach (ShortcutCommandBinding binding in collection) {
+            List<ShortcutCommandBinding> bindings;
+            if (this.CurrentSource != null && (bindings = GetCommandBindingHierarchy(this.CurrentSource)).Count > 0) {
+                foreach (ShortcutCommandBinding binding in bindings) {
                     if (!shortcut.FullPath.Equals(binding.ShortcutPath)) {
                         continue;
                     }
