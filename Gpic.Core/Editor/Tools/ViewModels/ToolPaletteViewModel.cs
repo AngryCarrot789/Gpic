@@ -80,6 +80,8 @@ namespace Gpic.Core.Editor.Tools.ViewModels {
             this.ActivateColourCommand = new RelayCommand<string>(x => {
                 this.SetActiveColour(int.Parse(x) - 1);
             });
+
+            this.ActiveIndex = 0;
         }
 
         public void SetActiveColour(int index) {

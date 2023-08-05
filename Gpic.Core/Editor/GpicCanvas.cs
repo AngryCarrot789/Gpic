@@ -14,6 +14,8 @@ namespace Gpic.Core.Editor {
         /// </summary>
         public SKBitmap Bitmap;
 
+        public GpicEditor Editor;
+
         public GpicCanvas() {
         }
 

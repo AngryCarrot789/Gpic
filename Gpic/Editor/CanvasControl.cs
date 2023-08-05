@@ -8,6 +8,7 @@ using Gpic.Core;
 using Gpic.Core.Editor;
 using Gpic.Core.Editor.ViewModels;
 using Gpic.Core.Utils;
+using Gpic.Utils;
 using SkiaSharp;
 
 namespace Gpic.Editor {
@@ -127,7 +128,7 @@ namespace Gpic.Editor {
             EditorViewModel editor = this.Editor;
             CanvasViewModel canvas = this.Canvas;
             if (editor != null && canvas != null && editor.ToolPalette.ActiveBrush != null) {
-                editor.ToolPalette.ActiveBrush.Model.Draw(editor.Model, canvas.Model, new Vector2((float) pos.X, (float) pos.Y));
+                editor.ToolPalette.ActiveBrush.Model.Draw(editor.Model, canvas.Model, (this.lastMousePoint ?? pos).ToVec2(), new Vector2((float) pos.X, (float) pos.Y));
                 this.InvalidateRender();
             }
 

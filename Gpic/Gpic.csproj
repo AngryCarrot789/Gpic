@@ -136,6 +136,7 @@
     <Compile Include="AttachedProperties\ToggleButtonHelper.cs" />
     <Compile Include="AttachedProperties\TopmostFocus.cs" />
     <Compile Include="BindingErrorListener.cs" />
+    <Compile Include="CustomCursor.cs" />
     <Compile Include="Editor\CanvasControl.cs" />
     <Compile Include="PropertyEditing\PropertyEditor.cs" />
     <Compile Include="PropertyEditing\PropertyEditorItemContainer.cs" />
@@ -201,6 +202,7 @@
     <Compile Include="Utils\KBUtils.cs" />
     <Compile Include="Utils\KeyUtils.cs" />
     <Compile Include="Utils\NumberAverager.cs" />
+    <Compile Include="Utils\PointUtils.cs" />
     <Compile Include="Utils\ResourceDictionaryDataTemplateSelector.cs" />
     <Compile Include="Utils\ScrollerUtils.cs" />
     <Compile Include="Utils\TextPointerUtils.cs" />
@@ -486,4 +488,7 @@
     <Error Condition="!Exists('..\packages\SkiaSharp.NativeAssets.Win32.2.88.4-preview.89\build\net462\SkiaSharp.NativeAssets.Win32.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\SkiaSharp.NativeAssets.Win32.2.88.4-preview.89\build\net462\SkiaSharp.NativeAssets.Win32.targets'))" />
   </Target>
   <Import Project="..\packages\SkiaSharp.NativeAssets.Win32.2.88.4-preview.89\build\net462\SkiaSharp.NativeAssets.Win32.targets" Condition="Exists('..\packages\SkiaSharp.NativeAssets.Win32.2.88.4-preview.89\build\net462\SkiaSharp.NativeAssets.Win32.targets')" />
+  <PropertyGroup>
+    <PostBuildEvent>xcopy "$(SolutionDir)Assets" "$(TargetDir)Assets" /E /I /Y</PostBuildEvent>
+  </PropertyGroup>
 </Project>

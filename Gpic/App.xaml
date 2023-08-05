@@ -36,7 +36,8 @@
                                                          VerticalAlignment="{TemplateBinding VerticalContentAlignment}">
                                 <local:SKAsyncViewPort x:Name="PART_SkiaViewPort"
                                                        Width="{Binding Canvas.Width, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type editor:CanvasControl}}, FallbackValue=0}"
-                                                       Height="{Binding Canvas.Height, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type editor:CanvasControl}}, FallbackValue=0}"/>
+                                                       Height="{Binding Canvas.Height, RelativeSource={RelativeSource Mode=FindAncestor, AncestorType={x:Type editor:CanvasControl}}, FallbackValue=0}">
+                                </local:SKAsyncViewPort>
                             </controls:FreeMoveViewPortV2>
                         </ControlTemplate>
                     </Setter.Value>

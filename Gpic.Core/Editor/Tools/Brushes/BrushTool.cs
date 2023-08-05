@@ -10,7 +10,8 @@ namespace Gpic.Core.Editor.Tools.Brushes {
         /// </summary>
         /// <param name="editor"></param>
         /// <param name="canvas">The canvas to draw into</param>
-        /// <param name="point">The location of the mouse cursor</param>
-        public abstract void Draw(GpicEditor editor, GpicCanvas canvas, Vector2 point);
+        /// <param name="p1">The starting point</param>
+        /// <param name="p2">The ending point</param>
+        public abstract void Draw(GpicEditor editor, GpicCanvas canvas, Vector2 p1, Vector2 p2);
     }
 }

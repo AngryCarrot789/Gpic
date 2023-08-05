@@ -22,12 +22,15 @@ using Gpic.Core.Editor;
 using Gpic.Core.Editor.ViewModels;
 using Gpic.Core.Utils;
 using SkiaSharp;
+using System.Windows.Input;
 
 namespace Gpic {
     /// <summary>
     /// Interaction logic for App.xaml
     /// </summary>
     public partial class App : Application {
+        public static Cursor PencilBrush_Square;
+
         private AppSplashScreen splash;
 
         public App() {
@@ -121,6 +124,8 @@ namespace Gpic {
             else {
                 await IoC.MessageDialogs.ShowMessageAsync("No keymap available", "Keymap file does not exist: " + keymapFilePath + $".\nCurrent directory: {Directory.GetCurrentDirectory()}\nCommand line args:{string.Join("\n", Environment.GetCommandLineArgs())}");
             }
+
+            await this.SetActivity("Loading cursors...");
         }
 
         private async void Application_Startup(object sender, StartupEventArgs e) {
