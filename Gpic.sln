@@ -1,26 +1,46 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.33801.447
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33815.320
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Gpic", "Gpic\Gpic.csproj", "{0F5688C3-5CE9-4886-867A-25B3636338EE}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Gpic.Core", "Gpic.Core\Gpic.Core.csproj", "{888AB152-F517-4365-A9B9-CBFC53FBAEAC}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ColorPicker", "ColorPicker\ColorPicker.csproj", "{99A1FE30-81BE-4808-8151-C6988227B5A3}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
 		Debug|x64 = Debug|x64
+		Release|Any CPU = Release|Any CPU
 		Release|x64 = Release|x64
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{0F5688C3-5CE9-4886-867A-25B3636338EE}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{0F5688C3-5CE9-4886-867A-25B3636338EE}.Debug|Any CPU.Build.0 = Debug|x64
 		{0F5688C3-5CE9-4886-867A-25B3636338EE}.Debug|x64.ActiveCfg = Debug|x64
 		{0F5688C3-5CE9-4886-867A-25B3636338EE}.Debug|x64.Build.0 = Debug|x64
+		{0F5688C3-5CE9-4886-867A-25B3636338EE}.Release|Any CPU.ActiveCfg = Release|x64
+		{0F5688C3-5CE9-4886-867A-25B3636338EE}.Release|Any CPU.Build.0 = Release|x64
 		{0F5688C3-5CE9-4886-867A-25B3636338EE}.Release|x64.ActiveCfg = Release|x64
 		{0F5688C3-5CE9-4886-867A-25B3636338EE}.Release|x64.Build.0 = Release|x64
-		{888AB152-F517-4365-A9B9-CBFC53FBAEAC}.Release|x64.ActiveCfg = Release|x64
-		{888AB152-F517-4365-A9B9-CBFC53FBAEAC}.Release|x64.Build.0 = Release|x64
+		{888AB152-F517-4365-A9B9-CBFC53FBAEAC}.Debug|Any CPU.ActiveCfg = Debug|x64
+		{888AB152-F517-4365-A9B9-CBFC53FBAEAC}.Debug|Any CPU.Build.0 = Debug|x64
 		{888AB152-F517-4365-A9B9-CBFC53FBAEAC}.Debug|x64.ActiveCfg = Debug|x64
 		{888AB152-F517-4365-A9B9-CBFC53FBAEAC}.Debug|x64.Build.0 = Debug|x64
+		{888AB152-F517-4365-A9B9-CBFC53FBAEAC}.Release|Any CPU.ActiveCfg = Release|x64
+		{888AB152-F517-4365-A9B9-CBFC53FBAEAC}.Release|Any CPU.Build.0 = Release|x64
+		{888AB152-F517-4365-A9B9-CBFC53FBAEAC}.Release|x64.ActiveCfg = Release|x64
+		{888AB152-F517-4365-A9B9-CBFC53FBAEAC}.Release|x64.Build.0 = Release|x64
+		{99A1FE30-81BE-4808-8151-C6988227B5A3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99A1FE30-81BE-4808-8151-C6988227B5A3}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99A1FE30-81BE-4808-8151-C6988227B5A3}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{99A1FE30-81BE-4808-8151-C6988227B5A3}.Debug|x64.Build.0 = Debug|Any CPU
+		{99A1FE30-81BE-4808-8151-C6988227B5A3}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99A1FE30-81BE-4808-8151-C6988227B5A3}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99A1FE30-81BE-4808-8151-C6988227B5A3}.Release|x64.ActiveCfg = Release|Any CPU
+		{99A1FE30-81BE-4808-8151-C6988227B5A3}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
