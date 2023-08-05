@@ -124,8 +124,6 @@ namespace Gpic {
             else {
                 await IoC.MessageDialogs.ShowMessageAsync("No keymap available", "Keymap file does not exist: " + keymapFilePath + $".\nCurrent directory: {Directory.GetCurrentDirectory()}\nCommand line args:{string.Join("\n", Environment.GetCommandLineArgs())}");
             }
-
-            await this.SetActivity("Loading cursors...");
         }
 
         private async void Application_Startup(object sender, StartupEventArgs e) {
